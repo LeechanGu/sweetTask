@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">SweeTask</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_schedule">ScheduleActivity</string>
+    <string name="title_activity_set_task">SetTaskActivity</string>
+    <string name="title_activity_setting">SettingActivity</string>
+    <string name="title_settaskactivity_list">Tasks</string>
+    <string name="title_settaskactivity_detail">SetTaskActivity Detail</string>
+    <string name="title_activity_set_common_task">SetCommonTaskActivity</string>
+    <string name="intent_extra_task_item_key">TaskItemKey</string>
+    <string name="intent_extra_new_or_edit">NewOrEdit</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_log_in">Log In</string>
+    <string name="title_activity_register">Register</string>
+    <string name="title_activity_base_action_bar">BaseActionBarActivity</string>
+</resources>

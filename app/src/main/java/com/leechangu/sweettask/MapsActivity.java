@@ -1,0 +1,162 @@
+package com.leechangu.sweettask;
+
+import android.content.Intent;
+import android.graphics.Color;
+import android.support.v4.app.FragmentActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+public class MapsActivity extends FragmentActivity implements SeekBar.OnSeekBarChangeListener {
+
+    private static final LatLng HOME = new LatLng(43.474521,-80.537389);
+    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private SeekBar radiusSeekBar;
+    private Circle circle;
+    private int DEFAULT_RADIUS = 2000;
+    private int RADIUS_MAX = 20000;
+    private int DEFAULT_COLOR = Color.argb(30, Color.red(Color.BLUE), Color.green(Color.BLUE),
+            Color.blue(Color.BLUE));
+    private float DEFAULT_ZOOM_FACTOR = 13.0f;
+    private ImageButton homeButton;
+    private TextView distanceTextView;
+    private UiSettings mUiSettings;
+    private ImageButton mapOkButton;
+    private final static int MAP_RESULT_REQUEST = 1;
+    private final static String MAP_RESULT_CENTER = "mapResult_center";
+    private final static String MAP_RESULT_RADIUS= "mapResult_radius";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+        setUpMapIfNeeded();
+
+        mMap.setMyLocationEnabled(true);
+        mUiSettings = mMap.getUiSettings();
+        mUiSettings.setZoomControlsEnabled(true);
+        mUiSettings.setCompassEnabled(false);
+        mUiSettings.setMyLocationButtonEnabled(false);
+        mMap.setMyLocationEnabled(false);
+        mUiSettings.setScrollGesturesEnabled(true);
+        mUiSettings.setZoomGesturesEnabled(true);
+        mUiSettings.setTiltGesturesEnabled(false);
+        mUiSettings.setRotateGesturesEnabled(false);
+
+        distanceTextView = (TextView)findViewById(R.id.distanceTextView);
+        homeButton = (ImageButton)findViewById(R.id.homeButton);
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                zoomBackHome();
+            }
+        });
+        mapOkButton = (ImageButton)findViewById(R.id.mapOkButton);
+        mapOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra(MAP_RESULT_CENTER,circle.getCenter());
+                intent.putExtra(MAP_RESULT_RADIUS,circle.getRadius());
+                setResult(1,intent);
+                finish();
+            }
+        });
+
+        radiusSeekBar = (SeekBar)findViewById(R.id.radiusSeekBar);
+        radiusSeekBar.setMax(RADIUS_MAX);
+        radiusSeekBar.setProgress(DEFAULT_RADIUS);
+        radiusSeekBar.setOnSeekBarChangeListener(this);
+        // refresh HOME address
+        // draw a circle
+        circle = mMap.addCircle(new CircleOptions()
+                .center(HOME)
+                .radius(radiusSeekBar.getProgress())
+                .strokeWidth(0)
+                .strokeColor(DEFAULT_COLOR)
+                .fillColor(DEFAULT_COLOR));
+        distanceTextView.setText(radiusSeekBar.getProgress()+" m");
+
+        zoomBackHome();
+    }
+
+    private void zoomBackHome()
+    {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HOME, DEFAULT_ZOOM_FACTOR));
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (seekBar == radiusSeekBar) {
+            circle.setRadius(progress);
+            distanceTextView.setText(progress + " m");
+
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        // Don't do anything here.
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        // Don't do anything here.
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpMapIfNeeded();
+    }
+
+    /**
+     * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
+     * installed) and the map has not already been instantiated.. This will ensure that we only ever
+     * call {@link #setUpMap()} once when {@link #mMap} is not null.
+     * <p>
+     * If it isn't installed {@link SupportMapFragment} (and
+     * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
+     * install/update the Google Play services APK on their device.
+     * <p>
+     * A user can return to this FragmentActivity after following the prompt and correctly
+     * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
+     * have been completely destroyed during this process (it is likely that it would only be
+     * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
+     * method in {@link #onResume()} to guarantee that it will be called.
+     */
+    private void setUpMapIfNeeded() {
+        // Do a null check to confirm that we have not already instantiated the map.
+        if (mMap == null) {
+            // Try to obtain the map from the SupportMapFragment.
+            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+                    .getMap();
+            // Check if we were successful in obtaining the map.
+            if (mMap != null) {
+                setUpMap();
+            }
+        }
+    }
+
+    /**
+     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
+     * just add a marker near Africa.
+     * <p>
+     * This should only be called once and when we are sure that {@link #mMap} is not null.
+     */
+    private void setUpMap() {
+        mMap.addMarker(new MarkerOptions().position(HOME).title("HOME"));
+    }
+}
