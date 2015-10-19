@@ -3,6 +3,8 @@ package com.leechangu.sweettask;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
+import com.leechangu.sweettask.login.LogInActivity;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 

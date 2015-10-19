@@ -8,10 +8,16 @@
         app:showAsAction="always">
     </item>
     <item
+        android:id="@+id/menu_item_save"
+        android:title="Save Task"
+        android:icon="@drawable/glyphicons_443_floppy_disk"
+        app:showAsAction="always">
+    </item>
+    <item
         android:id="@+id/menu_item_delete"
         android:title="Delete Task"
         android:icon="@drawable/glyphicons_016_bin"
-        app:showAsAction="never">
+        app:showAsAction="always">
     </item>
     <item android:id="@+id/menu_item_settings"
         android:title="Setting"

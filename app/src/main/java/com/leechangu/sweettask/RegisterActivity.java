@@ -4,16 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import database.DatabaseAdapter;
+import com.leechangu.sweettask.database.DatabaseAdapter;
+import com.leechangu.sweettask.login.LogInActivity;
 
 public class RegisterActivity extends Activity {
     private EditText newUsername;
@@ -111,7 +109,7 @@ public class RegisterActivity extends Activity {
         //Check database for existing users.
         Cursor user = dbHelper.fetchUser(username, password);
         if (user == null) {
-            Toast.makeText(getApplicationContext(), "Database query error",
+            Toast.makeText(getApplicationContext(), "query error",
                     Toast.LENGTH_SHORT).show();
         } else {
             startManagingCursor(user);

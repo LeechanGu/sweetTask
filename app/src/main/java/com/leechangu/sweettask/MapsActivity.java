@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -18,13 +17,14 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.leechangu.sweettask.settask.TaskPreferenceActivity;
 
 public class MapsActivity extends FragmentActivity implements SeekBar.OnSeekBarChangeListener {
 
     private static final LatLng HOME = new LatLng(43.474521,-80.537389);
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private SeekBar radiusSeekBar;
-    private Circle circle;
+    private MapCircle mapCircle;
     private int DEFAULT_RADIUS = 2000;
     private int RADIUS_MAX = 20000;
     private int DEFAULT_COLOR = Color.argb(30, Color.red(Color.BLUE), Color.green(Color.BLUE),
@@ -34,9 +34,7 @@ public class MapsActivity extends FragmentActivity implements SeekBar.OnSeekBarC
     private TextView distanceTextView;
     private UiSettings mUiSettings;
     private ImageButton mapOkButton;
-    private final static int MAP_RESULT_REQUEST = 1;
-    private final static String MAP_RESULT_CENTER = "mapResult_center";
-    private final static String MAP_RESULT_RADIUS= "mapResult_radius";
+    public final static String MAP_RESULT = "MAP_RESULT";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,25 +66,29 @@ public class MapsActivity extends FragmentActivity implements SeekBar.OnSeekBarC
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.putExtra(MAP_RESULT_CENTER,circle.getCenter());
-                intent.putExtra(MAP_RESULT_RADIUS,circle.getRadius());
-                setResult(1,intent);
+                intent.putExtra(MAP_RESULT, mapCircle.toString());
+                setResult(TaskPreferenceActivity.REQUESTCODE_MAP, intent);
                 finish();
             }
         });
-
         radiusSeekBar = (SeekBar)findViewById(R.id.radiusSeekBar);
         radiusSeekBar.setMax(RADIUS_MAX);
         radiusSeekBar.setProgress(DEFAULT_RADIUS);
         radiusSeekBar.setOnSeekBarChangeListener(this);
         // refresh HOME address
-        // draw a circle
-        circle = mMap.addCircle(new CircleOptions()
+        Circle c = mMap.addCircle(new CircleOptions()
                 .center(HOME)
                 .radius(radiusSeekBar.getProgress())
                 .strokeWidth(0)
                 .strokeColor(DEFAULT_COLOR)
                 .fillColor(DEFAULT_COLOR));
+        Bundle bundle = getIntent().getExtras();
+        String mapInfo = bundle.getString("map_info");
+        if (mapInfo!=null)
+        {
+            c = MapCircle.setLatLongRadius(c,mapInfo);
+        }
+        mapCircle = new MapCircle(c);
         distanceTextView.setText(radiusSeekBar.getProgress()+" m");
 
         zoomBackHome();
@@ -100,9 +102,8 @@ public class MapsActivity extends FragmentActivity implements SeekBar.OnSeekBarC
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (seekBar == radiusSeekBar) {
-            circle.setRadius(progress);
+            mapCircle.setRadius(progress);
             distanceTextView.setText(progress + " m");
-
         }
     }
 

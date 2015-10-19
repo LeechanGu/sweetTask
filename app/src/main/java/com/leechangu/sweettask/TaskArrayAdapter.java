@@ -5,9 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.List;
@@ -15,9 +15,21 @@ import java.util.List;
 /**
  * Created by Administrator on 2015/10/2.
  */
-public class TaskArrayAdapter extends ArrayAdapter<CommonTaskItem> {
-    public TaskArrayAdapter(Context context, int resource, List<CommonTaskItem> objects) {
-        super(context, R.layout.custom_task_row, objects);
+public class TaskArrayAdapter extends ArrayAdapter<TaskItem> {
+    private MainActivity mainActivity;
+    List<TaskItem> taskItems;
+
+    public TaskArrayAdapter(Context context, int resource, List<TaskItem> objects) {
+        super(context, resource, objects);
+        mainActivity = (MainActivity)context;
+        taskItems = objects;
+    }
+
+    public void setTaskItems(List<TaskItem> taskItems)
+    {
+        this.taskItems = taskItems;
+        super.clear();
+        super.addAll(taskItems);
     }
 
     @Override
@@ -25,7 +37,7 @@ public class TaskArrayAdapter extends ArrayAdapter<CommonTaskItem> {
         LayoutInflater layoutInflater = LayoutInflater.from(getContext());
         View customView = layoutInflater.inflate(R.layout.custom_task_row, parent, false);
 
-        CommonTaskItem taskItem = getItem(position);
+        TaskItem taskItem = getItem(position);
         TextView taskContentTextView = (TextView)customView.findViewById(R.id.taskContentTextView);
         taskContentTextView.setText(taskItem.getContent());
 
@@ -33,6 +45,10 @@ public class TaskArrayAdapter extends ArrayAdapter<CommonTaskItem> {
         String timeBasisString = taskItem.getTimeBasisEnum().toString();
         timeBasisTextView.setText(timeBasisString );
 
+        CheckBox checkBox = (CheckBox) customView.findViewById(R.id.finishCheckBox);
+        checkBox.setChecked(taskItem.isActive());
+        checkBox.setTag(position);
+        checkBox.setOnClickListener(mainActivity);
 
         ProgressBar progressBar = (ProgressBar)customView.findViewById(R.id.progressBar);
         int result[] = getMaxAndValueForProgress(taskItem.getTimeBasisEnum());
@@ -125,4 +141,6 @@ public class TaskArrayAdapter extends ArrayAdapter<CommonTaskItem> {
         }
         return result;
     }
+
+
 }
