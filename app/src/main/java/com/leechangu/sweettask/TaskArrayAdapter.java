@@ -1,6 +1,8 @@
 package com.leechangu.sweettask;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,25 +45,36 @@ public class TaskArrayAdapter extends ArrayAdapter<TaskItem> {
 
         TextView timeBasisTextView = (TextView)customView.findViewById(R.id.timeBasisTextView);
         String timeBasisString = taskItem.getTimeBasisEnum().toString();
-        timeBasisTextView.setText(timeBasisString );
+        timeBasisTextView.setText(timeBasisString+(taskItem.isFinished()?"":" ( not finished )"));
 
-        CheckBox checkBox = (CheckBox) customView.findViewById(R.id.finishCheckBox);
-        checkBox.setChecked(taskItem.isActive());
-        checkBox.setTag(position);
-        checkBox.setOnClickListener(mainActivity);
+        CheckBox activeCheckBox = (CheckBox) customView.findViewById(R.id.activeCheckBox);
+        activeCheckBox.setChecked(taskItem.isActive());
+        activeCheckBox.setTag(position);
+        activeCheckBox.setOnClickListener(mainActivity);
 
         ProgressBar progressBar = (ProgressBar)customView.findViewById(R.id.progressBar);
-        int result[] = getMaxAndValueForProgress(taskItem.getTimeBasisEnum());
-        progressBar.setMax(result[0]);
-        progressBar.setProgress(result[1]);
-
         TextView timeLeftTextView = (TextView)customView.findViewById(R.id.timeLeftTextView);
-        String remainingTime = getRemainingTime(taskItem.getTimeBasisEnum());
-        timeLeftTextView.setText(remainingTime);
+        int result[] = getMaxAndValueForProgress(taskItem.getTimeBasisEnum());
+        if (!taskItem.isFinished()) {
+            progressBar.setMax(result[0]);
+            progressBar.setProgress(result[1]);
+            progressBar.getProgressDrawable().setColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_IN);
+
+            String remainingTime = getRemainingTime(taskItem.getTimeBasisEnum());
+            timeLeftTextView.setText(remainingTime);
+        }
+        else
+        {
+            progressBar.setMax(result[0]);
+            progressBar.setProgress(result[0]);
+            progressBar.getProgressDrawable().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
+
+            timeLeftTextView.setText("Finished");
+        }
 
         return customView;
     }
-    public int[] getMaxAndValueForProgress(TimeBasisEnum timeBasis)
+    public int[] getMaxAndValueForProgress(TaskItem.TimeBasisEnum timeBasis)
     {
         int result[] = new int[2];
         Calendar now= Calendar.getInstance();
@@ -87,7 +100,7 @@ public class TaskArrayAdapter extends ArrayAdapter<TaskItem> {
         return result;
     }
 
-    public String getRemainingTime( TimeBasisEnum timeBasis)
+    public String getRemainingTime(TaskItem.TimeBasisEnum timeBasis)
     {
         String result = "unknown";
 

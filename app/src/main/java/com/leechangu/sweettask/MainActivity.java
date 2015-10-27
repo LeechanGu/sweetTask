@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.HapticFeedbackConstants;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,9 +15,10 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.leechangu.sweettask.settask.TaskDatabase;
+import com.leechangu.sweettask.db.TaskDb;
 import com.leechangu.sweettask.settask.TaskPreferenceActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActionBarActivity implements CheckBox.OnClickListener{
@@ -24,15 +26,19 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     private TaskArrayAdapter taskArrayAdapter;
     private final static String EDIT_STRING = "Edit";
     private final static String DELETE_STRING = "Delete";
+    public final static int REQUESTCODE_LOCATION = 2;
+    List<CheckBox> checkBoxeList;
+
+    CheckBox mapCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TaskDatabase.init(MainActivity.this);
+        TaskDb.init(MainActivity.this);
         taskListView = (ListView)findViewById(R.id.taskListView);
-        final List<TaskItem> taskItems = TaskDatabase.getAll();
+        final List<TaskItem> taskItems = TaskDb.getAll();
         taskArrayAdapter = new TaskArrayAdapter(this,R.layout.custom_task_row, taskItems);
         taskListView.setAdapter(taskArrayAdapter);
         taskListView.setLongClickable(true);
@@ -41,13 +47,78 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-                TaskItem taskItem = (TaskItem)taskListView.getItemAtPosition(position);
-                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-                Intent intent = new Intent();
-                intent.setClass(MainActivity.this, TaskPreferenceActivity.class);
-                intent.putExtra("taskItem", taskItem);
-                startActivity(intent);
+                final TaskItem taskItem = (TaskItem) taskListView.getItemAtPosition(position);
+
+                AlertDialog.Builder alert;
+                alert = new AlertDialog.Builder(MainActivity.this);
+                alert.setTitle("Task requirement:");
+
+                LayoutInflater inflater = getLayoutInflater();
+                final View modifyView = inflater.inflate(R.layout.finish_task_dialog, null);
+                alert.setView(modifyView);
+
+                checkBoxeList = new ArrayList<CheckBox>();
+                CheckBox contentCheckBox = (CheckBox)modifyView.findViewById(R.id.contentCheckBox);
+                contentCheckBox.setText(taskItem.getContent());
+                checkBoxeList.add(contentCheckBox);
+                mapCheckBox = (CheckBox) modifyView.findViewById(R.id.mapCheckBox);
+                if (taskItem.getMapInfo() == null) {
+                    mapCheckBox.setVisibility(View.INVISIBLE);
+                } else {
+                    mapCheckBox.setVisibility(View.VISIBLE);
+                    checkBoxeList.add(mapCheckBox);
+                    mapCheckBox.setText("Map task (Click for destination)");
+                    mapCheckBox.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mapCheckBox.isChecked()) {
+                                mapCheckBox.setChecked(false);
+                                Intent intent = new Intent();
+                                intent.setClass(MainActivity.this, MyLocationActivity.class);
+                                intent.putExtra("map_info", taskItem.getMapInfo());
+                                startActivityForResult(intent, REQUESTCODE_LOCATION);
+                            }
+                        }
+
+                    });
+                }
+
+                CheckBox photoCheckBox = (CheckBox) modifyView.findViewById(R.id.photoCheckBox);
+                photoCheckBox.setVisibility(View.INVISIBLE);
+
+                alert.setPositiveButton("Finished", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        boolean allChecked = true;
+                        for (CheckBox checkBox: checkBoxeList)
+                        {
+                            if (!checkBox.isChecked())
+                            {
+                                allChecked = false;
+                                break;
+                            }
+                        }
+                        if (allChecked) {
+                            Toast.makeText(getApplicationContext(), "Congratulation!", Toast.LENGTH_SHORT).show();
+                            taskItem.setFinished(true);
+                            TaskDb.update(taskItem);
+                            updateAlarmList();
+                        }
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(), "Some tasks are yet to be finished.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                alert.setNegativeButton("Not yet", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        taskItem.setFinished(false);
+                        TaskDb.update(taskItem);
+                        taskArrayAdapter.notifyDataSetChanged();
+                    }
+                });
+                alert.show();
             }
+
         });
 
         // display tasks in listView
@@ -84,8 +155,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 startActivity(intent);
                 break;
             case DELETE_STRING:
-                TaskDatabase.init(MainActivity.this);
-                TaskDatabase.deleteEntry(taskItem);
+                TaskDb.deleteEntry(taskItem);
                 break;
         }
         updateAlarmList();
@@ -101,7 +171,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     @Override
     protected void onPause() {
         // setListAdapter(null);
-        TaskDatabase.deactivate();
+        TaskDb.deactivate();
         super.onPause();
     }
 
@@ -112,8 +182,8 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     }
 
     public void updateAlarmList(){
-        TaskDatabase.init(MainActivity.this);
-        final List<TaskItem> taskItems = TaskDatabase.getAll();
+        TaskDb.init(MainActivity.this);
+        final List<TaskItem> taskItems = TaskDb.getAll();
         taskArrayAdapter.setTaskItems(taskItems);
         runOnUiThread(new Runnable() {
             public void run() {
@@ -124,15 +194,36 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.finishCheckBox) {
+        if (v.getId() == R.id.activeCheckBox) {
             CheckBox checkBox = (CheckBox) v;
-            TaskItem alarm = (TaskItem) taskArrayAdapter.getItem((Integer) checkBox.getTag());
-            alarm.setActive(checkBox.isChecked());
-            TaskDatabase.update(alarm);
-           // AlarmActivity.this.callMathAlarmScheduleService();
+            TaskItem taskItem = (TaskItem) taskArrayAdapter.getItem((Integer) checkBox.getTag());
+            taskItem.setActive(checkBox.isChecked());
+            TaskDb.update(taskItem);
+            // AlarmActivity.this.callMathAlarmScheduleService();
+            callScheduleService();
             if (checkBox.isChecked()) {
-                Toast.makeText(MainActivity.this, alarm.getTimeUntilNextAlarmMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, taskItem.getTimeUntilNextAlarmMessage(), Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    public void callScheduleService()
+    {
+        Intent scheduleServiceIntent = new Intent(this, TaskNotificationUpdateBroadcastReceiver.class);
+        sendBroadcast(scheduleServiceIntent, null);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Toast.makeText(getApplicationContext(), "onActivityResult,"+requestCode+","+resultCode, Toast.LENGTH_SHORT).show();
+        if (resultCode == REQUESTCODE_LOCATION) {
+            Bundle bundle = data.getExtras();
+            boolean finishMapOrNot = bundle.getBoolean(MyLocationActivity.LOCATION_RESULT);
+            if (finishMapOrNot)
+                mapCheckBox.setChecked(finishMapOrNot);
+            else
+                Toast.makeText(getApplicationContext(), "Map task not finished", Toast.LENGTH_SHORT).show();
         }
     }
 }

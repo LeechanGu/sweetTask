@@ -27,7 +27,7 @@ public class TaskPreferenceListAdapter  extends BaseAdapter {
     private String[] alarmTones;
     private String[] alarmTonePaths;
     private List<TaskPreference> preferences = new ArrayList<TaskPreference>();
-    private final String[] timeBasisOptions = {TimeBasisEnum.DAILY.toString(),TimeBasisEnum.WEEKLY.toString(),TimeBasisEnum.MONTHLY.toString()};
+    private final String[] timeBasisOptions = {TaskItem.TimeBasisEnum.DAILY.toString(),TaskItem.TimeBasisEnum.WEEKLY.toString(),TaskItem.TimeBasisEnum.MONTHLY.toString()};
 
     public TaskPreferenceListAdapter(Context context, TaskItem taskItem) {
         setContext(context);

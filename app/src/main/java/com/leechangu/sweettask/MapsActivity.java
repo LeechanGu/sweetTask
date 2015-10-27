@@ -2,8 +2,9 @@ package com.leechangu.sweettask;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -19,7 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.leechangu.sweettask.settask.TaskPreferenceActivity;
 
-public class MapsActivity extends FragmentActivity implements SeekBar.OnSeekBarChangeListener {
+public class MapsActivity extends BaseActionBarActivity implements SeekBar.OnSeekBarChangeListener {
 
     private static final LatLng HOME = new LatLng(43.474521,-80.537389);
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -33,7 +34,7 @@ public class MapsActivity extends FragmentActivity implements SeekBar.OnSeekBarC
     private ImageButton homeButton;
     private TextView distanceTextView;
     private UiSettings mUiSettings;
-    private ImageButton mapOkButton;
+
     public final static String MAP_RESULT = "MAP_RESULT";
 
     @Override
@@ -61,16 +62,7 @@ public class MapsActivity extends FragmentActivity implements SeekBar.OnSeekBarC
                 zoomBackHome();
             }
         });
-        mapOkButton = (ImageButton)findViewById(R.id.mapOkButton);
-        mapOkButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtra(MAP_RESULT, mapCircle.toString());
-                setResult(TaskPreferenceActivity.REQUESTCODE_MAP, intent);
-                finish();
-            }
-        });
+
         radiusSeekBar = (SeekBar)findViewById(R.id.radiusSeekBar);
         radiusSeekBar.setMax(RADIUS_MAX);
         radiusSeekBar.setProgress(DEFAULT_RADIUS);
@@ -159,5 +151,35 @@ public class MapsActivity extends FragmentActivity implements SeekBar.OnSeekBarC
      */
     private void setUpMap() {
         mMap.addMarker(new MarkerOptions().position(HOME).title("HOME"));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean result = super.onCreateOptionsMenu(menu);
+        menu.findItem(R.id.menu_item_new).setVisible(false);
+        menu.findItem(R.id.menu_item_delete).setVisible(true);
+        menu.findItem(R.id.menu_item_save).setVisible(true);
+        return result;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = null;
+        switch (item.getItemId()) {
+            case R.id.menu_item_save:
+                intent = new Intent();
+                intent.putExtra(MAP_RESULT, mapCircle.toString());
+                setResult(TaskPreferenceActivity.REQUESTCODE_MAP, intent);
+                finish();
+                break;
+            case R.id.menu_item_delete:
+                intent = new Intent();
+                intent.putExtra(MAP_RESULT, MapCircle.NO_MAP);
+                setResult(TaskPreferenceActivity.REQUESTCODE_MAP, intent);
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

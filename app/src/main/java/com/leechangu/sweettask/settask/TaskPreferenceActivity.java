@@ -22,13 +22,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.leechangu.sweettask.BaseActionBarActivity;
+import com.leechangu.sweettask.MapCircle;
 import com.leechangu.sweettask.MapsActivity;
 import com.leechangu.sweettask.TaskItem;
 import com.leechangu.sweettask.TimeBasisEnum;
+import com.leechangu.sweettask.db.TaskDb;
 import com.leechangu.sweettask.settask.TaskPreference.Key;
 import com.leechangu.sweettask.R;
-
-import java.util.List;
 
 public class TaskPreferenceActivity extends BaseActionBarActivity {
 
@@ -122,7 +122,7 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 switch (TaskPreference.getKey()) {
                                     case TASK_REPEAT:
-                                        taskItem.setTimeBasis(TimeBasisEnum.values()[which]);
+                                        taskItem.setTimeBasis(TaskItem.TimeBasisEnum.values()[which]);
                                         break;
                                     case TASK_TONE:
                                         taskItem.setAlarmTonePath(taskPreferenceListAdapter.getAlarmTonePaths()[which]);
@@ -185,7 +185,7 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                         alert.show();
                         break;
                     case MAP:
-                        if (TaskPreference.getKey().equals(Key.TASK_REPEAT))
+                        if (TaskPreference.getKey().equals(Key.TASK_MAP))
                         {
                             Intent intent = new Intent();
                             intent.setClass(TaskPreferenceActivity.this, MapsActivity.class);
@@ -222,11 +222,24 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        final TaskPreferenceListAdapter taskPreferenceListAdapter = (TaskPreferenceListAdapter) getListAdapter();
         if (requestCode == REQUESTCODE_MAP)
         {
-            Bundle bundle = data.getExtras();
-            taskItem.setMapInfo(bundle.getString(MapsActivity.MAP_RESULT));
-            updatePreferenceList();
+            if (resultCode >0) {
+                Bundle bundle = data.getExtras();
+                String mapInfo = bundle.getString(MapsActivity.MAP_RESULT);
+                if (!mapInfo.equals(MapCircle.NO_MAP)) {
+                    taskItem.setMapInfo(mapInfo);
+                    updatePreferenceList();
+                }
+                else
+                {
+                    taskItem.setMapInfo(null);
+                    updatePreferenceList();
+                }
+                taskPreferenceListAdapter.DisplayPreferences(getTaskItem());
+                taskPreferenceListAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -251,11 +264,11 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_save:
-                TaskDatabase.init(getApplicationContext());
+                TaskDb.init(getApplicationContext());
                 if (getTaskItem().getId() < 1) {
-                    TaskDatabase.create(getTaskItem());
+                    TaskDb.create(getTaskItem());
                 } else {
-                    TaskDatabase.update(getTaskItem());
+                    TaskDb.update(getTaskItem());
                 }
                 //callMathAlarmScheduleService();
                 Toast.makeText(TaskPreferenceActivity.this, getTaskItem().getTimeUntilNextAlarmMessage(), Toast.LENGTH_LONG).show();
@@ -270,11 +283,11 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        TaskDatabase.init(getApplicationContext());
+                        TaskDb.init(getApplicationContext());
                         if (getTaskItem().getId() < 1) {
                             // Alarm not saved
                         } else {
-                            TaskDatabase.deleteEntry(taskItem);
+                            TaskDb.deleteEntry(taskItem);
                             //callMathAlarmScheduleService();
                         }
                         finish();

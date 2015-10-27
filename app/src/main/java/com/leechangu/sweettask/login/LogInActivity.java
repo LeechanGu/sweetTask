@@ -16,12 +16,12 @@ import com.leechangu.sweettask.MainActivity;
 import com.leechangu.sweettask.R;
 import com.leechangu.sweettask.RegisterActivity;
 import com.leechangu.sweettask.UtilRepository;
-import com.leechangu.sweettask.database.DatabaseAdapter;
+import com.leechangu.sweettask.db.AccountDbAdapter;
 
 public class LogInActivity extends Activity {
 
     public static final String MY_PREFS = "SweeTaskPreference";
-    private DatabaseAdapter dbAdapter;
+    private AccountDbAdapter dbAdapter;
     private EditText theUsername;
     private EditText thePassword;
     private Button loginButton;
@@ -41,7 +41,7 @@ public class LogInActivity extends Activity {
         editor.putLong("uid", 0);
         editor.commit();
 
-        dbAdapter = new DatabaseAdapter(this);
+        dbAdapter = new AccountDbAdapter(this);
         dbAdapter.open();
 
         setContentView(R.layout.activity_log_in);
@@ -121,7 +121,7 @@ public class LogInActivity extends Activity {
         if (theUser != null) {
             startManagingCursor(theUser);
             if (theUser.getCount() > 0) {
-                saveLoggedInUId(theUser.getLong(theUser.getColumnIndex(DatabaseAdapter.COL_ID)), thisUsername, thePassword.getText().toString());
+                saveLoggedInUId(theUser.getLong(theUser.getColumnIndex(AccountDbAdapter.COL_ID)), thisUsername, thePassword.getText().toString());
                 stopManagingCursor(theUser);
                 theUser.close();
                 Intent i = new Intent(v.getContext(), MainActivity.class);

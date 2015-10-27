@@ -1,24 +1,31 @@
 package com.leechangu.sweettask;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.media.RingtoneManager;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by Administrator on 2015/10/2.
  */
 public class TaskItem implements Serializable {
+    public enum TimeBasisEnum {
+        DAILY,WEEKLY, MONTHLY
+    }
 
     private static final long serialVersionUID = 8699489847426803789L;
     private int id = -1;
     private String taskContent = "undefined";
     private TimeBasisEnum timeBasis = TimeBasisEnum.DAILY;
-    private TaskTypeEnum taskType = TaskTypeEnum.COMMON_TASK;
     private Calendar alarmTime = Calendar.getInstance();
     private boolean vibrate = true;
-    private boolean activated = true;
+    private boolean active = true;
+    private boolean finished = false;
     private String mapInfo = null;
     private String alarmTonePath = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString();
 
@@ -39,7 +46,15 @@ public class TaskItem implements Serializable {
     }
 
     public void setActive(boolean activated) {
-        this.activated = activated;
+        this.active = activated;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 
     public String getAlarmTonePath() {
@@ -61,17 +76,6 @@ public class TaskItem implements Serializable {
     public TaskItem() {
     }
 
-    TaskItem(String taskContent, TimeBasisEnum timeBasis, TaskTypeEnum taskType) {
-        this.taskContent = taskContent;
-        this.timeBasis = timeBasis;
-        this.taskType = taskType;
-    }
-
-    TaskItem(String taskContent, TimeBasisEnum timeBasis, TaskTypeEnum taskType, long created, long modified) {
-        this.taskContent = taskContent;
-        this.timeBasis = timeBasis;
-        this.taskType = taskType;
-    }
     public void setTimeBasis(TimeBasisEnum timeBasis) {
         this.timeBasis = timeBasis;
     }
@@ -105,33 +109,34 @@ public class TaskItem implements Serializable {
         this.taskContent =taskContent ;
     }
 
-    public void setTaskType(TaskTypeEnum taskType)
-    {
-        this.taskType =taskType ;
-    }
-
 
     public String getContent()
     {
         return taskContent;
     }
 
-    public TimeBasisEnum getTimeBasisEnum()
+    public TaskItem.TimeBasisEnum getTimeBasisEnum()
     {
         return timeBasis;
     }
 
-    public TaskTypeEnum getTaskType()
-    {
-        return taskType;
-    }
 
     public boolean isVibrate() {
         return vibrate;
     }
 
     public boolean isActive() {
-        return activated;
+        return active;
+    }
+
+    public void schedule(Context context) {
+        Log.i("LogInfo", this.getClass().getSimpleName() + ".schedule()");
+        setActive(true);
+        Intent myIntent = new Intent(context, TaskNotificationBroadcastReceiver.class);
+        myIntent.putExtra("taskName",this.getContent());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, this.getAlarmTime().getTimeInMillis()-10*60*1000,pendingIntent);//getAlarmTime().getTimeInMillis()
     }
 
 

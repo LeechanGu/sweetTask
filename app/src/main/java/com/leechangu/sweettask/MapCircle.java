@@ -12,6 +12,7 @@ import java.util.Scanner;
  * Created by Administrator on 2015/10/16.
  */
 public class MapCircle implements Serializable {
+    public static final String NO_MAP = "NO_MAP";
     private Circle circle;
     public MapCircle(Circle circle) {
         this.circle = circle;
@@ -38,7 +39,7 @@ public class MapCircle implements Serializable {
 
     @Override
     public String toString() {
-        return circle.getCenter().latitude+","+circle.getCenter().longitude+","+circle.getRadius();
+        return circle.getCenter().latitude+" "+circle.getCenter().longitude+" "+circle.getRadius();
     }
 
     public static Circle setLatLongRadius(Circle circle, String latLongRadius )

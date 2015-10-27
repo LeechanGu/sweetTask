@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.leechangu.sweettask.database.DatabaseAdapter;
+import com.leechangu.sweettask.db.AccountDbAdapter;
 import com.leechangu.sweettask.login.LogInActivity;
 
 public class RegisterActivity extends Activity {
@@ -20,7 +20,7 @@ public class RegisterActivity extends Activity {
     private Button registerButton;
     private Button backButton;
 
-    private DatabaseAdapter dbHelper;
+    private AccountDbAdapter dbHelper;
     private UtilRepository utilRepo;
 
     @Override
@@ -32,7 +32,7 @@ public class RegisterActivity extends Activity {
         editor.putLong("uid", 0);
         editor.commit();
 
-        dbHelper = new DatabaseAdapter(this);
+        dbHelper = new AccountDbAdapter(this);
         dbHelper.open();
         setContentView(R.layout.activity_register);
         initControls();

@@ -19,6 +19,7 @@
         android:icon="@drawable/glyphicons_016_bin"
         app:showAsAction="always">
     </item>
+
     <item android:id="@+id/menu_item_settings"
         android:title="Setting"
         android:orderInCategory="100"

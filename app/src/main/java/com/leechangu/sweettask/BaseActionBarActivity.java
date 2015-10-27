@@ -8,7 +8,7 @@ import android.view.MenuItem;
 
 import com.leechangu.sweettask.settask.TaskPreferenceActivity;
 
-public class BaseActionBarActivity extends AppCompatActivity {
+public abstract class BaseActionBarActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,7 @@ public class BaseActionBarActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 
 
 }
