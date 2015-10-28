@@ -1,12 +1,12 @@
 # sweetTask
-User Story
+## User Story
 
 -2. change the bottom buttons (my task, his/her task) to drawing tabs, and add the calendar view tab
 
 -1. Design the calendar view (can be blank)
 
 0. Add the completion statuses to the calendar
-1. 
+
 1. Add User Management. Users can only access their own tasks after logging in.
  
 2. change local accountDB to Parse DB. 
