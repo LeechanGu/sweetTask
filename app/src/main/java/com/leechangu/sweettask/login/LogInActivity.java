@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.leechangu.sweettask.MainActivity;
 import com.leechangu.sweettask.R;
-import com.leechangu.sweettask.RegisterActivity;
 import com.leechangu.sweettask.UtilRepository;
 import com.leechangu.sweettask.db.AccountDbAdapter;
 

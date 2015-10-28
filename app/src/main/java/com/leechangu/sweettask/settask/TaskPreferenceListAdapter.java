@@ -13,7 +13,6 @@ import android.widget.CheckedTextView;
 import android.widget.TextView;
 
 import com.leechangu.sweettask.TaskItem;
-import com.leechangu.sweettask.TimeBasisEnum;
 
 import java.util.ArrayList;
 import java.util.List;

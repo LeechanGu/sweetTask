@@ -1,11 +1,10 @@
 package com.leechangu.sweettask.settask;
 
-import com.leechangu.sweettask.TimeBasisEnum;
-
 /**
  * Created by Administrator on 2015/10/14.
  */
-public class TaskPreference {
+public class
+        TaskPreference {
 
     public enum Key{
         TASK_CONTENT,

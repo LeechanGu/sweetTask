@@ -25,7 +25,6 @@ import com.leechangu.sweettask.BaseActionBarActivity;
 import com.leechangu.sweettask.MapCircle;
 import com.leechangu.sweettask.MapsActivity;
 import com.leechangu.sweettask.TaskItem;
-import com.leechangu.sweettask.TimeBasisEnum;
 import com.leechangu.sweettask.db.TaskDb;
 import com.leechangu.sweettask.settask.TaskPreference.Key;
 import com.leechangu.sweettask.R;

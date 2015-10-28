@@ -49,7 +49,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RegisterActivity"
+            android:name=".login.RegisterActivity"
             android:label="@string/title_activity_register" >
         </activity>
         <activity

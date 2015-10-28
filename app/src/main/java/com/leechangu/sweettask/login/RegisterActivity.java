@@ -1,4 +1,4 @@
-package com.leechangu.sweettask;
+package com.leechangu.sweettask.login;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,6 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.leechangu.sweettask.MainActivity;
+import com.leechangu.sweettask.R;
+import com.leechangu.sweettask.UtilRepository;
 import com.leechangu.sweettask.db.AccountDbAdapter;
 import com.leechangu.sweettask.login.LogInActivity;
 
