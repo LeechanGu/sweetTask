@@ -1,13 +1,14 @@
 package com.leechangu.sweettask;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.leechangu.sweettask.settask.TaskPreferenceActivity;
 
+// this should be inherited by other activities that requires action bar
 public abstract class BaseActionBarActivity extends AppCompatActivity {
 
     @Override
