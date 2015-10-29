@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:layout_gravity="fill_horizontal"
+    android:orientation="vertical">
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:id="@+id/Username"
+        android:selectAllOnFocus="true"
+        android:lines="1"
+        android:hint="Username"
+        android:inputType="text"
+        android:layout_width="fill_parent"
+        android:layout_gravity="fill_horizontal"
+        android:gravity="fill_horizontal"
+        android:layout_margin="10dp">
+    </EditText>
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:id="@+id/Password"
+        android:selectAllOnFocus="true"
+        android:lines="1"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:layout_width="fill_parent"
+        android:layout_gravity="fill_horizontal"
+        android:gravity="fill_horizontal"
+        android:layout_margin="10dp">
+    </EditText>
+
+    <CheckBox
+        android:text="Remember me"
+        android:id="@+id/RememberMe"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_margin="10dp">
+    </CheckBox>
+
+    <Button
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="Log In"
+        android:id="@+id/Login"
+        android:clickable="true"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp">
+    </Button>
+
+    <Button
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="Register"
+        android:id="@+id/Register"
+        android:clickable="true"
+        android:layout_width="fill_parent"
+        android:layout_margin="10dp">
+    </Button>
+
+</LinearLayout>
+<!-- From: file:/Users/CharlesGao/Projects/ECE651/SweeTask/sweetTask/app/src/main/res/layout/activity_log_in.xml -->

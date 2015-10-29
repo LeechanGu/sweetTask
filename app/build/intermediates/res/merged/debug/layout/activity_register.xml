@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:layout_gravity="fill_horizontal"
+    android:orientation="vertical">
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:id="@+id/nUsername"
+        android:selectAllOnFocus="true"
+        android:lines="1"
+        android:hint="Username"
+        android:inputType="text"
+        android:layout_width="fill_parent"
+        android:layout_gravity="fill_horizontal"
+        android:gravity="fill_horizontal"
+        android:layout_margin="10dp">
+    </EditText>
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:selectAllOnFocus="true"
+        android:lines="1"
+        android:id="@+id/nPassword"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:layout_gravity="fill_horizontal"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp">
+    </EditText>
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:selectAllOnFocus="true"
+        android:lines="1"
+        android:id="@+id/nConfiPass"
+        android:hint="Confirm password"
+        android:inputType="textPassword"
+        android:layout_gravity="fill_horizontal"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp">
+    </EditText>
+
+    <Button
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="Register"
+        android:id="@+id/nRegister"
+        android:clickable="true"
+        android:layout_width="fill_parent"
+        android:layout_margin="10dp">
+    </Button>
+
+    <Button
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="Back"
+        android:id="@+id/nBack"
+        android:clickable="true"
+        android:layout_width="fill_parent"
+        android:layout_margin="10dp">
+    </Button>
+
+</LinearLayout>
+<!-- From: file:/Users/CharlesGao/Projects/ECE651/SweeTask/sweetTask/app/src/main/res/layout/activity_register.xml -->
