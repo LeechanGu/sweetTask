@@ -20,7 +20,7 @@ import com.leechangu.sweettask.settask.TaskPreferenceActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-
+// This is the main Activity of the app, displaying all the tasks
 public class MainActivity extends BaseActionBarActivity implements CheckBox.OnClickListener{
     private ListView taskListView;
     private TaskArrayAdapter taskArrayAdapter;
