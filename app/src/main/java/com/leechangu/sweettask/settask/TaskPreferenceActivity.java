@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBar;
-import android.os.Bundle;
 import android.view.HapticFeedbackConstants;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,10 +24,10 @@ import android.widget.Toast;
 import com.leechangu.sweettask.BaseActionBarActivity;
 import com.leechangu.sweettask.MapCircle;
 import com.leechangu.sweettask.MapsActivity;
+import com.leechangu.sweettask.R;
 import com.leechangu.sweettask.TaskItem;
 import com.leechangu.sweettask.db.TaskDb;
 import com.leechangu.sweettask.settask.TaskPreference.Key;
-import com.leechangu.sweettask.R;
 
 public class TaskPreferenceActivity extends BaseActionBarActivity {
 
@@ -192,25 +192,6 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                             startActivityForResult(intent, REQUESTCODE_MAP);
                         }
                         break;
-                    /*
-                    case TIME:
-                        switch (TaskPreference.getKey()) {
-                            case TASK_REPEAT:
-                                TimePickerDialog timePickerDialog = new TimePickerDialog(TaskPreferenceActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                                    @Override
-                                    public void onTimeSet(TimePicker timePicker, int hours, int minutes) {
-                                        Calendar newAlarmTime = Calendar.getInstance();
-                                        newAlarmTime.set(Calendar.HOUR_OF_DAY, hours);
-                                        newAlarmTime.set(Calendar.MINUTE, minutes);
-                                        newAlarmTime.set(Calendar.SECOND, 0);
-                                        taskItem.setAlarmTime(newAlarmTime);
-                                        TaskPreferenceListAdapter.DisplayPreferences(getTaskItem());
-                                        TaskPreferenceListAdapter.notifyDataSetChanged();
-                                    }
-                                }, taskItem.getAlarmTime().get(Calendar.HOUR_OF_DAY), taskItem.getAlarmTime().get(Calendar.MINUTE), true);
-                                timePickerDialog.setTitle(TaskPreference.getTitle());
-                                timePickerDialog.show();
-                        }*/
                     default:
                         break;
                 }

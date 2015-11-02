@@ -79,7 +79,7 @@ public class TaskDb extends SQLiteOpenHelper {
     {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ACTIVE, taskItem.isActive());
-        cv.put(COLUMN_ALARM_TIME,taskItem.getAlarmTime().getTimeInMillis());
+        cv.put(COLUMN_ALARM_TIME, taskItem.calculateNextAlarmTime().getTimeInMillis());
         cv.put(COLUMN_TONE_PATH, taskItem.getAlarmTonePath());
         cv.put(COLUMN_REPEAT, taskItem.getTimeBasisEnum().toString());
         cv.put(COLUMN_VIBRATE, taskItem.isVibrate());
