@@ -13,6 +13,7 @@ public class
         TASK_TONE,
         TASK_VIBRATE,
         TASK_MAP,
+        TASK_PHOTO
     }
 
     public enum Type{

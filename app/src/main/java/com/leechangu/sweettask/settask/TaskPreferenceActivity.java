@@ -11,6 +11,7 @@ import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBar;
 import android.view.HapticFeedbackConstants;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +29,8 @@ import com.leechangu.sweettask.R;
 import com.leechangu.sweettask.TaskItem;
 import com.leechangu.sweettask.db.TaskDb;
 import com.leechangu.sweettask.settask.TaskPreference.Key;
+
+import java.util.zip.Inflater;
 
 public class TaskPreferenceActivity extends BaseActionBarActivity {
 
@@ -81,6 +84,9 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                                     vibrator.vibrate(1000);
                                 }
                                 break;
+                            case TASK_PHOTO:
+                                taskItem.setIsPhotoTask(checked);
+                                break;
                         }
                         TaskPreference.setValue(checked);
                         break;
@@ -88,11 +94,14 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                         alert = new AlertDialog.Builder(TaskPreferenceActivity.this);
                         alert.setTitle(TaskPreference.getTitle());
 
-                        final EditText input = new EditText(TaskPreferenceActivity.this);
+//                        final EditText input = new EditText(TaskPreferenceActivity.this);
 
-                        input.setText(TaskPreference.getValue().toString());
+//                        input.setText(TaskPreference.getValue().toString());
+                        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+                        View inputView = inflater.inflate(R.layout.task_pre_act_content, null);
+                        final EditText input = (EditText)inputView.findViewById(R.id.et_task_pre_act_content);
+                        alert.setView(inputView);
 
-                        alert.setView(input);
                         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
 
@@ -192,6 +201,25 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                             startActivityForResult(intent, REQUESTCODE_MAP);
                         }
                         break;
+                    /*
+                    case TIME:
+                        switch (TaskPreference.getKey()) {
+                            case TASK_REPEAT:
+                                TimePickerDialog timePickerDialog = new TimePickerDialog(TaskPreferenceActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(TimePicker timePicker, int hours, int minutes) {
+                                        Calendar newAlarmTime = Calendar.getInstance();
+                                        newAlarmTime.set(Calendar.HOUR_OF_DAY, hours);
+                                        newAlarmTime.set(Calendar.MINUTE, minutes);
+                                        newAlarmTime.set(Calendar.SECOND, 0);
+                                        taskItem.setAlarmTime(newAlarmTime);
+                                        TaskPreferenceListAdapter.DisplayPreferences(getTaskItem());
+                                        TaskPreferenceListAdapter.notifyDataSetChanged();
+                                    }
+                                }, taskItem.getAlarmTime().get(Calendar.HOUR_OF_DAY), taskItem.getAlarmTime().get(Calendar.MINUTE), true);
+                                timePickerDialog.setTitle(TaskPreference.getTitle());
+                                timePickerDialog.show();
+                        }*/
                     default:
                         break;
                 }
