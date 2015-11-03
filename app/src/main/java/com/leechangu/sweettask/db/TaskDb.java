@@ -21,7 +21,7 @@ public class TaskDb extends SQLiteOpenHelper {
     static SQLiteDatabase database = null;
 
     static final String DATABASE_NAME = "DB";
-    static final int DATABASE_VERSION = 4;
+    static final int DATABASE_VERSION = 5;
 
     public static final String TASK_TABLE = "tasks";
     public static final String COLUMN_ID = "_id";
@@ -32,7 +32,9 @@ public class TaskDb extends SQLiteOpenHelper {
     public static final String COLUMN_VIBRATE = "task_vibrate";
     public static final String COLUMN_CONTENT = "task_content";
     public static final String COLUMN_MAP = "task_map";
+    public static final String COLUMN_PHOTO = "task_photo";
     public static final String COLUMN_FINISHED = "task_finished";
+
     private static final String[] columns = new String[] {
             COLUMN_ID,
             COLUMN_ALARM_TIME,
@@ -42,6 +44,7 @@ public class TaskDb extends SQLiteOpenHelper {
             COLUMN_VIBRATE,
             COLUMN_CONTENT,
             COLUMN_MAP,
+            COLUMN_PHOTO,
             COLUMN_FINISHED
     };
 
@@ -85,6 +88,7 @@ public class TaskDb extends SQLiteOpenHelper {
         cv.put(COLUMN_VIBRATE, taskItem.isVibrate());
         cv.put(COLUMN_CONTENT, taskItem.getContent());
         cv.put(COLUMN_MAP,taskItem.getMapInfo());
+        cv.put(COLUMN_PHOTO, taskItem.isPhotoTask());
         cv.put(COLUMN_FINISHED,taskItem.isFinished());
         return cv;
     }
@@ -125,6 +129,7 @@ public class TaskDb extends SQLiteOpenHelper {
         taskItem.setVibrate(cursor.getInt(cursor.getColumnIndex(COLUMN_VIBRATE)) == 1);
         taskItem.setContent(cursor.getString(cursor.getColumnIndex(COLUMN_CONTENT)));
         taskItem.setMapInfo(cursor.getString(cursor.getColumnIndex(COLUMN_MAP)));
+        taskItem.setIsPhotoTask(cursor.getInt(cursor.getColumnIndex(COLUMN_PHOTO)) == 1);
         taskItem.setFinished(cursor.getInt(cursor.getColumnIndex(COLUMN_FINISHED))==1);
         return taskItem;
     }
@@ -149,6 +154,7 @@ public class TaskDb extends SQLiteOpenHelper {
                 + COLUMN_VIBRATE + " INTEGER NOT NULL, "
                 + COLUMN_MAP + " TEXT DEFAULT NULL, "
                 + COLUMN_CONTENT + " TEXT NOT NULL,"
+                + COLUMN_PHOTO + " INTEGER NOT NULL, "
                 + COLUMN_FINISHED + " INTEGER NOT NULL)");
     }
 

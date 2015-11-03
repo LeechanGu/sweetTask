@@ -25,9 +25,38 @@ public class TaskItem implements Serializable {
     private Calendar alarmTime = Calendar.getInstance();
     private boolean vibrate = true;
     private boolean active = true;
+    private boolean isPhotoTask = false; // The new Task is not a photo task by default
     private boolean finished = false;
     private String mapInfo = null;
     private String alarmTonePath = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString();
+    private boolean isPhotoTaskFinished = false;
+    private boolean isMapTaskFinished = false;
+
+
+    public boolean isPhotoTaskFinished() {
+        return isPhotoTaskFinished;
+    }
+
+    public void setIsPhotoTaskFinished(boolean isPhotoTaskFinished) {
+        this.isPhotoTaskFinished = isPhotoTaskFinished;
+    }
+
+    public boolean isMapTaskFinished() {
+        return isMapTaskFinished;
+    }
+
+    public void setIsMapTaskFinished(boolean isMapTaskFinished) {
+        this.isMapTaskFinished = isMapTaskFinished;
+    }
+
+    public boolean isPhotoTask() {
+        return isPhotoTask;
+    }
+
+    public void setIsPhotoTask(boolean isPhotoTask) {
+        this.isPhotoTask = isPhotoTask;
+    }
+
 
     public int getId() {
         return id;

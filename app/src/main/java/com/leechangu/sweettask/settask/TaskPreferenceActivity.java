@@ -11,6 +11,7 @@ import android.os.Vibrator;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.view.HapticFeedbackConstants;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +29,8 @@ import com.leechangu.sweettask.TaskItem;
 import com.leechangu.sweettask.db.TaskDb;
 import com.leechangu.sweettask.settask.TaskPreference.Key;
 import com.leechangu.sweettask.R;
+
+import java.util.zip.Inflater;
 
 public class TaskPreferenceActivity extends BaseActionBarActivity {
 
@@ -81,6 +84,9 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                                     vibrator.vibrate(1000);
                                 }
                                 break;
+                            case TASK_PHOTO:
+                                taskItem.setIsPhotoTask(checked);
+                                break;
                         }
                         TaskPreference.setValue(checked);
                         break;
@@ -88,11 +94,14 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                         alert = new AlertDialog.Builder(TaskPreferenceActivity.this);
                         alert.setTitle(TaskPreference.getTitle());
 
-                        final EditText input = new EditText(TaskPreferenceActivity.this);
+//                        final EditText input = new EditText(TaskPreferenceActivity.this);
 
-                        input.setText(TaskPreference.getValue().toString());
+//                        input.setText(TaskPreference.getValue().toString());
+                        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+                        View inputView = inflater.inflate(R.layout.task_pre_act_content, null);
+                        final EditText input = (EditText)inputView.findViewById(R.id.et_task_pre_act_content);
+                        alert.setView(inputView);
 
-                        alert.setView(input);
                         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
 
@@ -192,6 +201,9 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                             startActivityForResult(intent, REQUESTCODE_MAP);
                         }
                         break;
+
+
+
                     /*
                     case TIME:
                         switch (TaskPreference.getKey()) {

@@ -69,6 +69,8 @@ public class TaskPreferenceListAdapter  extends BaseAdapter {
             preferences.add(new TaskPreference(TaskPreference.Key.TASK_TONE, "Ringtone", getAlarmTones()[0],alarmTones, null, TaskPreference.Type.LIST));
         }
         preferences.add(new TaskPreference(TaskPreference.Key.TASK_MAP, "Map Task", taskItem.getMapInfo(), null, taskItem.getMapInfo(), TaskPreference.Type.MAP));
+        preferences.add(new TaskPreference(TaskPreference.Key.TASK_PHOTO, "Photo Task", null, null, taskItem.isPhotoTask(), TaskPreference.Type.BOOLEAN));
+
     }
 
     @Override
