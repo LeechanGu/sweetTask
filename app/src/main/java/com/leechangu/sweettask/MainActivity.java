@@ -55,6 +55,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     private static int RESULT_TAKE_PIC_FROM_CAMERA = 2;
 
     CheckBox mapCheckBox;
+    CheckBox photoCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +113,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                     });
                 }
                 //Add checkBox for Photo
-                final CheckBox photoCheckBox = (CheckBox) modifyView.findViewById(R.id.photoCheckBox);
+                photoCheckBox = (CheckBox) modifyView.findViewById(R.id.photoCheckBox);
                 photoCheckBox.setVisibility(View.INVISIBLE);
                 if(taskItem.isPhotoTask()){
                     photoCheckBox.setVisibility(View.VISIBLE);
@@ -342,15 +343,14 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 }
                 Bitmap bm = BitmapFactory.decodeStream(fis);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bm.compress(Bitmap.CompressFormat.JPEG, 50 , baos);
+                bm.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                 byte[] b = baos.toByteArray();
 
                 //decode a image-------
                 Bitmap bmp=BitmapFactory.decodeByteArray(b,0,b.length);
                 uploadedPhoto.setImageBitmap(bmp);
                 //---------------------
-
-
+                photoCheckBox.setChecked(true);
 
                 // Decode this image to ParseFile
 //                file = new ParseFile("propic.jpg", b);
@@ -394,8 +394,10 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 //                    }
 //                });
 
+                photoCheckBox.setChecked(true);
 
             } else {
+                photoCheckBox.setChecked(false);
                 Toast.makeText(this, "You haven't picked photo",
                         Toast.LENGTH_SHORT).show();
             }
