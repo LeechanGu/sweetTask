@@ -16,4 +16,6 @@
     <string name="title_activity_register">Register</string>
     <string name="title_activity_base_action_bar">BaseActionBarActivity</string>
     <string name="title_activity_my_location">MyLocationActivity</string>
+    <string name="content">Content</string>
+
 </resources>

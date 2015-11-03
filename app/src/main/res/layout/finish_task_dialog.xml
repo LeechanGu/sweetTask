@@ -29,5 +29,13 @@
         android:checked="false"
         android:layout_marginLeft="10dp" />
 
+    <ImageView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/iv_photo_upload"
+        android:layout_gravity="center_horizontal"
+        />
+
+
 
 </LinearLayout>

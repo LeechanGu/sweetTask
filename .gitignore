@@ -12,7 +12,7 @@
 /.idea/vcs.xml
 .DS_Store
 /build
-app/app.iml
-app/build
+/app/app.iml
+/app/build
 *.iml
 /.svn
