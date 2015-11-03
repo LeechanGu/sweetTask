@@ -97,7 +97,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 } else {
                     mapCheckBox.setVisibility(View.VISIBLE);
                     checkBoxeList.add(mapCheckBox);
-                    mapCheckBox.setText("Map task (Click for destination)");
+                    mapCheckBox.setText("Map task (Click to view the goal)");
                     mapCheckBox.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -118,7 +118,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 if(taskItem.isPhotoTask()){
                     photoCheckBox.setVisibility(View.VISIBLE);
                     checkBoxeList.add(photoCheckBox);
-                    photoCheckBox.setText("Photo task (Click for uploading photo)");
+                    photoCheckBox.setText("Photo task (Click to upload a photo)");
                     photoCheckBox.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View v) {

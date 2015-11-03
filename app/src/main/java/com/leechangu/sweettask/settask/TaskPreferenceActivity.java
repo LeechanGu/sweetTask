@@ -30,8 +30,6 @@ import com.leechangu.sweettask.TaskItem;
 import com.leechangu.sweettask.db.TaskDb;
 import com.leechangu.sweettask.settask.TaskPreference.Key;
 
-import java.util.zip.Inflater;
-
 public class TaskPreferenceActivity extends BaseActionBarActivity {
 
     private TaskItem taskItem;
@@ -100,6 +98,8 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
                         View inputView = inflater.inflate(R.layout.task_pre_act_content, null);
                         final EditText input = (EditText)inputView.findViewById(R.id.et_task_pre_act_content);
+                        if (!TaskPreference.getValue().toString().equals("undefined"))
+                            input.setText(TaskPreference.getValue().toString());
                         alert.setView(inputView);
 
                         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
