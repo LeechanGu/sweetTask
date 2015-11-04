@@ -4,7 +4,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
 import android.util.Log;
 
 import java.io.Serializable;
@@ -28,7 +27,9 @@ public class TaskItem implements Serializable {
     private boolean isPhotoTask = false; // The new Task is not a photo task by default
     private boolean finished = false;
     private String mapInfo = null;
-    private String alarmTonePath = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString();
+
+    private String alarmTonePath = "";//RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString();
+
     private boolean isPhotoTaskFinished = false;
     private boolean isMapTaskFinished = false;
 
@@ -57,7 +58,6 @@ public class TaskItem implements Serializable {
         this.isPhotoTask = isPhotoTask;
     }
 
-
     public int getId() {
         return id;
     }
@@ -68,6 +68,10 @@ public class TaskItem implements Serializable {
 
     public void setAlarmTime(Calendar alarmTime) {
         this.alarmTime = alarmTime;
+    }
+
+    public Calendar getAlarmTime() {
+        return alarmTime;
     }
 
     public void setVibrate(boolean vibrate) {
@@ -109,7 +113,7 @@ public class TaskItem implements Serializable {
         this.timeBasis = timeBasis;
     }
 
-    public Calendar getAlarmTime() {
+    public Calendar calculateNextAlarmTime() {
         alarmTime = Calendar.getInstance();
         alarmTime.set(Calendar.MILLISECOND,0);
         alarmTime.set(Calendar.SECOND,0);
@@ -165,12 +169,12 @@ public class TaskItem implements Serializable {
         myIntent.putExtra("taskName",this.getContent());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent,PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, this.getAlarmTime().getTimeInMillis()-10*60*1000,pendingIntent);//getAlarmTime().getTimeInMillis()
+        alarmManager.set(AlarmManager.RTC_WAKEUP, this.calculateNextAlarmTime().getTimeInMillis() - 10 * 60 * 1000, pendingIntent);
     }
 
 
     public String getTimeUntilNextAlarmMessage(){
-        long timeDifference = getAlarmTime().getTimeInMillis() - System.currentTimeMillis();
+        long timeDifference = calculateNextAlarmTime().getTimeInMillis() - System.currentTimeMillis();
         long days = timeDifference / (1000 * 60 * 60 * 24);
         long hours = timeDifference / (1000 * 60 * 60) - (days * 24);
         long minutes = timeDifference / (1000 * 60) - (days * 24 * 60) - (hours * 60);

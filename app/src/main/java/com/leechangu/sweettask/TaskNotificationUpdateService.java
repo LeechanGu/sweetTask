@@ -30,7 +30,7 @@ public class TaskNotificationUpdateService extends Service {
             @Override
             public int compare(TaskItem lhs, TaskItem rhs) {
                 int result = 0;
-                long diff = lhs.getAlarmTime().getTimeInMillis() - rhs.getAlarmTime().getTimeInMillis();
+                long diff = lhs.calculateNextAlarmTime().getTimeInMillis() - rhs.calculateNextAlarmTime().getTimeInMillis();
                 if(diff>0){
                     return 1;
                 }else if (diff < 0){

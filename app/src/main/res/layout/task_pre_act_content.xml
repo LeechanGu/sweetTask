@@ -13,13 +13,13 @@
         />
 
     <EditText
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_below="@id/tv_task_pre_act_content"
         android:layout_height="wrap_content"
         android:id="@+id/et_task_pre_act_content"
-        android:gravity="center_horizontal"
         android:hint="Undefined"
-        />
+        android:layout_margin="10dp"
+        android:textColor="#000000" />
 
 
 

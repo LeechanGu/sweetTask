@@ -55,6 +55,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     private static int RESULT_TAKE_PIC_FROM_CAMERA = 2;
 
     CheckBox mapCheckBox;
+    CheckBox photoCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +97,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 } else {
                     mapCheckBox.setVisibility(View.VISIBLE);
                     checkBoxeList.add(mapCheckBox);
-                    mapCheckBox.setText("Map task (Click for destination)");
+                    mapCheckBox.setText("Map task (Click to view the goal)");
                     mapCheckBox.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -112,12 +113,12 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                     });
                 }
                 //Add checkBox for Photo
-                final CheckBox photoCheckBox = (CheckBox) modifyView.findViewById(R.id.photoCheckBox);
+                photoCheckBox = (CheckBox) modifyView.findViewById(R.id.photoCheckBox);
                 photoCheckBox.setVisibility(View.INVISIBLE);
                 if(taskItem.isPhotoTask()){
                     photoCheckBox.setVisibility(View.VISIBLE);
                     checkBoxeList.add(photoCheckBox);
-                    photoCheckBox.setText("Photo task (Click for uploading photo)");
+                    photoCheckBox.setText("Photo task (Click to upload a photo)");
                     photoCheckBox.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View v) {
@@ -289,7 +290,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(getApplicationContext(), "onActivityResult,"+requestCode+","+resultCode, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "onActivityResult,"+requestCode+","+resultCode, Toast.LENGTH_SHORT).show();
 
         // For permission (Only when API 23+)
         int permission = ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -342,15 +343,14 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 }
                 Bitmap bm = BitmapFactory.decodeStream(fis);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bm.compress(Bitmap.CompressFormat.JPEG, 50 , baos);
+                bm.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                 byte[] b = baos.toByteArray();
 
                 //decode a image-------
                 Bitmap bmp=BitmapFactory.decodeByteArray(b,0,b.length);
                 uploadedPhoto.setImageBitmap(bmp);
                 //---------------------
-
-
+                photoCheckBox.setChecked(true);
 
                 // Decode this image to ParseFile
 //                file = new ParseFile("propic.jpg", b);
@@ -394,8 +394,10 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 //                    }
 //                });
 
+                photoCheckBox.setChecked(true);
 
             } else {
+                photoCheckBox.setChecked(false);
                 Toast.makeText(this, "You haven't picked photo",
                         Toast.LENGTH_SHORT).show();
             }

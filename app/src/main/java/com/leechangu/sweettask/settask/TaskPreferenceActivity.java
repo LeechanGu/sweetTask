@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBar;
-import android.os.Bundle;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,12 +25,10 @@ import android.widget.Toast;
 import com.leechangu.sweettask.BaseActionBarActivity;
 import com.leechangu.sweettask.MapCircle;
 import com.leechangu.sweettask.MapsActivity;
+import com.leechangu.sweettask.R;
 import com.leechangu.sweettask.TaskItem;
 import com.leechangu.sweettask.db.TaskDb;
 import com.leechangu.sweettask.settask.TaskPreference.Key;
-import com.leechangu.sweettask.R;
-
-import java.util.zip.Inflater;
 
 public class TaskPreferenceActivity extends BaseActionBarActivity {
 
@@ -100,6 +98,8 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
                         View inputView = inflater.inflate(R.layout.task_pre_act_content, null);
                         final EditText input = (EditText)inputView.findViewById(R.id.et_task_pre_act_content);
+                        if (!TaskPreference.getValue().toString().equals("undefined"))
+                            input.setText(TaskPreference.getValue().toString());
                         alert.setView(inputView);
 
                         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -201,9 +201,6 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                             startActivityForResult(intent, REQUESTCODE_MAP);
                         }
                         break;
-
-
-
                     /*
                     case TIME:
                         switch (TaskPreference.getKey()) {

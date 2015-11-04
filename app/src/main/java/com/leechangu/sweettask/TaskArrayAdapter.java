@@ -106,7 +106,7 @@ public class TaskArrayAdapter extends ArrayAdapter<TaskItem> {
 
         Calendar now= Calendar.getInstance();
         Calendar due=Calendar.getInstance();
-        due.setFirstDayOfWeek(Calendar.MONDAY);
+        //due.setFirstDayOfWeek(Calendar.MONDAY);
         switch (timeBasis)
         {
             case DAILY:
