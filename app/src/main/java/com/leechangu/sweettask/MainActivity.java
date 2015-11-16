@@ -25,8 +25,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.leechangu.sweettask.db.TaskDb;
+//import com.leechangu.sweettask.db.TaskDb;
 import com.leechangu.sweettask.settask.TaskPreferenceActivity;
+import com.parse.ParseUser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,7 +38,9 @@ import java.util.List;
 
 public class MainActivity extends BaseActionBarActivity implements CheckBox.OnClickListener{
     private ListView taskListView;
-    private TaskArrayAdapter taskArrayAdapter;
+    private String username;
+//    private TaskArrayAdapter taskArrayAdapter;
+    private ParseTaskArrayAdapter parseTaskArrayAdapter;
     private final static String EDIT_STRING = "Edit";
     private final static String DELETE_STRING = "Delete";
     public final static int REQUESTCODE_LOCATION = 2;
@@ -62,18 +65,24 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TaskDb.init(MainActivity.this);
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        username = currentUser.getUsername();
+        final List<ParseTaskItem> parseTaskItems =
+                ParseTaskItemRepository.getAllParseTasksFromParseByUserName(username);
+
+//        TaskDb.init(MainActivity.this);
         taskListView = (ListView)findViewById(R.id.taskListView);
-        final List<TaskItem> taskItems = TaskDb.getAll();
-        taskArrayAdapter = new TaskArrayAdapter(this,R.layout.custom_task_row, taskItems);
-        taskListView.setAdapter(taskArrayAdapter);
+//        final List<TaskItem> taskItems = TaskDb.getAll();
+//        taskArrayAdapter = new TaskArrayAdapter(this,R.layout.custom_task_row, taskItems);
+        parseTaskArrayAdapter = new ParseTaskArrayAdapter(this,R.layout.custom_task_row, parseTaskItems);
+        taskListView.setAdapter(parseTaskArrayAdapter);
         taskListView.setLongClickable(true);
         taskListView.setClickable(true);
         taskListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-                final TaskItem taskItem = (TaskItem) taskListView.getItemAtPosition(position);
+                final ParseTaskItem parseTaskItem = (ParseTaskItem) taskListView.getItemAtPosition(position);
 
                 final AlertDialog.Builder alert;
                 alert = new AlertDialog.Builder(MainActivity.this);
@@ -87,12 +96,12 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 
                 checkBoxeList = new ArrayList<CheckBox>();
                 CheckBox contentCheckBox = (CheckBox)modifyView.findViewById(R.id.contentCheckBox);
-                contentCheckBox.setText(taskItem.getContent());
+                contentCheckBox.setText(parseTaskItem.getContent());
                 checkBoxeList.add(contentCheckBox);
 
                 //Add checkBox for Map
                 mapCheckBox = (CheckBox) modifyView.findViewById(R.id.mapCheckBox);
-                if (taskItem.getMapInfo() == null) {
+                if (parseTaskItem.getMapInfo() == null) {
                     mapCheckBox.setVisibility(View.INVISIBLE);
                 } else {
                     mapCheckBox.setVisibility(View.VISIBLE);
@@ -105,7 +114,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                                 mapCheckBox.setChecked(false);
                                 Intent intent = new Intent();
                                 intent.setClass(MainActivity.this, MyLocationActivity.class);
-                                intent.putExtra("map_info", taskItem.getMapInfo());
+                                intent.putExtra("map_info", parseTaskItem.getMapInfo());
                                 startActivityForResult(intent, REQUESTCODE_LOCATION);
                             }
                         }
@@ -115,7 +124,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 //Add checkBox for Photo
                 photoCheckBox = (CheckBox) modifyView.findViewById(R.id.photoCheckBox);
                 photoCheckBox.setVisibility(View.INVISIBLE);
-                if(taskItem.isPhotoTask()){
+                if(parseTaskItem.isPhotoTask()){
                     photoCheckBox.setVisibility(View.VISIBLE);
                     checkBoxeList.add(photoCheckBox);
                     photoCheckBox.setText("Photo task (Click to upload a photo)");
@@ -157,8 +166,9 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                         }
                         if (allChecked) {
                             Toast.makeText(getApplicationContext(), "Congratulation!", Toast.LENGTH_SHORT).show();
-                            taskItem.setFinished(true);
-                            TaskDb.update(taskItem);
+                            parseTaskItem.setIfAllTasksFinished(true);
+//                            TaskDb.update(parseTaskItem);
+                            ParseTaskItemRepository.updateParseTask(parseTaskItem);
                             updateAlarmList();
                         }
                         else
@@ -169,9 +179,10 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 });
                 alert.setNegativeButton("Not yet", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        taskItem.setFinished(false);
-                        TaskDb.update(taskItem);
-                        taskArrayAdapter.notifyDataSetChanged();
+                        parseTaskItem.setIfAllTasksFinished(false);
+//                        TaskDb.update(taskItem);
+                        ParseTaskItemRepository.updateParseTask(parseTaskItem);
+                        parseTaskArrayAdapter.notifyDataSetChanged();
                     }
                 });
                 alert.show();
@@ -219,17 +230,18 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo itemInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        TaskItem taskItem = (TaskItem)taskListView.getItemAtPosition(itemInfo.position);
+        ParseTaskItem parseTaskItem = (ParseTaskItem)taskListView.getItemAtPosition(itemInfo.position);
         switch (item.toString())
         {
             case EDIT_STRING:
                 Intent intent = new Intent();
                 intent.setClass(this, TaskPreferenceActivity.class);
-                intent.putExtra("taskItem",taskItem);
+                intent.putExtra("taskItem",parseTaskItem);
                 startActivity(intent);
                 break;
             case DELETE_STRING:
-                TaskDb.deleteEntry(taskItem);
+//                TaskDb.deleteEntry(taskItem);
+                ParseTaskItemRepository.deleteParseTask(parseTaskItem);
                 break;
         }
         updateAlarmList();
@@ -245,7 +257,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     @Override
     protected void onPause() {
         // setListAdapter(null);
-        TaskDb.deactivate();
+//        TaskDb.deactivate();
         super.onPause();
     }
 
@@ -256,27 +268,35 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     }
 
     public void updateAlarmList(){
-        TaskDb.init(MainActivity.this);
-        final List<TaskItem> taskItems = TaskDb.getAll();
-        taskArrayAdapter.setTaskItems(taskItems);
+//        TaskDb.init(MainActivity.this);
+//        final List<TaskItem> taskItems = TaskDb.getAll();
+        final List<ParseTaskItem> parseTaskItems =
+                ParseTaskItemRepository.getAllParseTasksFromParseByUserName(username);
+        parseTaskArrayAdapter.setParseTaskItems(parseTaskItems);
         runOnUiThread(new Runnable() {
             public void run() {
-                MainActivity.this.taskArrayAdapter.notifyDataSetChanged();
+                MainActivity.this.parseTaskArrayAdapter.notifyDataSetChanged();
             }
         });
     }
+
+//    public static void notifyDataSetChangedFromOther(){
+//        parseTaskArrayAdapter.notifyDataSetChanged();
+//    }
+
 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.activeCheckBox) {
             CheckBox checkBox = (CheckBox) v;
-            TaskItem taskItem = (TaskItem) taskArrayAdapter.getItem((Integer) checkBox.getTag());
-            taskItem.setActive(checkBox.isChecked());
-            TaskDb.update(taskItem);
+            ParseTaskItem parseTaskItem = (ParseTaskItem) parseTaskArrayAdapter.getItem((Integer) checkBox.getTag());
+            parseTaskItem.setActive(checkBox.isChecked());
+//            TaskDb.update(taskItem);
+            ParseTaskItemRepository.updateParseTask(parseTaskItem);
             // AlarmActivity.this.callMathAlarmScheduleService();
             callScheduleService();
             if (checkBox.isChecked()) {
-                Toast.makeText(MainActivity.this, taskItem.getTimeUntilNextAlarmMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, parseTaskItem.getTimeUntilNextAlarmMessage(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -408,4 +428,10 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
         }
 
     }
+
+    // Toast at this Context
+    public void toastSomething(String message){
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+    }
+
 }
