@@ -16,6 +16,11 @@ import com.leechangu.sweettask.MainActivity;
 import com.leechangu.sweettask.R;
 import com.leechangu.sweettask.UtilRepository;
 import com.leechangu.sweettask.db.AccountDbAdapter;
+import com.parse.LogInCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 public class LogInActivity extends Activity {
 
@@ -35,9 +40,15 @@ public class LogInActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Already add this two lines in App.java class that extends the Application
+        // Then you don't need to add these two line in every activity of your app
+//        // Enable Local Datastore.
+//        Parse.enableLocalDatastore(this);
+//        Parse.initialize(this, "RkIHvpR9hEdejBizCivkmywOflupRH49ozgFHROt", "ZqTOMc3F7JucJzOzJc0rt3st4Iffy2ij6njXc0QX");
+
         SharedPreferences mySharedPreferences = getSharedPreferences(MY_PREFS, 0);
         SharedPreferences.Editor editor = mySharedPreferences.edit();
-        editor.putLong("uid", 0);
+//        editor.putLong("uid", 0);
         editor.commit();
 
         dbAdapter = new AccountDbAdapter(this);
@@ -109,40 +120,55 @@ public class LogInActivity extends Activity {
      */
     private void LogMeIn(View v) {
         //Get the username and password
-        String thisUsername = theUsername.getText().toString();
+        final String thisUsername = theUsername.getText().toString();
         String thisPassword = thePassword.getText().toString();
 
         //Assign the hash to the password
         thisPassword = UtilRepository.md5(thisPassword);
 
-        // Check the existing user name and password database
-        Cursor theUser = dbAdapter.fetchUser(thisUsername, thisPassword);
-        if (theUser != null) {
-            startManagingCursor(theUser);
-            if (theUser.getCount() > 0) {
-                saveLoggedInUId(theUser.getLong(theUser.getColumnIndex(AccountDbAdapter.COL_ID)), thisUsername, thePassword.getText().toString());
-                stopManagingCursor(theUser);
-                theUser.close();
-                Intent i = new Intent(v.getContext(), MainActivity.class);
-                startActivity(i);
+        // Using Parse
+        ParseUser.logInInBackground(thisUsername, thisPassword, new LogInCallback() {
+            public void done(ParseUser user, ParseException e) {
+                if (user != null) {
+                    // Hooray! The user is logged in.
+                    saveLoggedInUId(thisUsername, thePassword.getText().toString());
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(i);
+                } else {
+                    // Signup failed. Look at the ParseException to see what happened.
+                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+                }
             }
+        });
 
-            //Returns appropriate message if no match is made
-            else {
-                Toast.makeText(getApplicationContext(),
-                        "You have entered an incorrect username or password.",
-                        Toast.LENGTH_SHORT).show();
-                saveLoggedInUId(0, "", "");
-            }
-            stopManagingCursor(theUser);
-            theUser.close();
-        }
-
-        else {
-            Toast.makeText(getApplicationContext(),
-                    "query error",
-                    Toast.LENGTH_SHORT).show();
-        }
+//        // Check the existing user name and password database
+//        Cursor theUser = dbAdapter.fetchUser(thisUsername, thisPassword);
+//        if (theUser != null) {
+//            startManagingCursor(theUser);
+//            if (theUser.getCount() > 0) {
+//                saveLoggedInUId(theUser.getLong(theUser.getColumnIndex(AccountDbAdapter.COL_ID)), thisUsername, thePassword.getText().toString());
+//                stopManagingCursor(theUser);
+//                theUser.close();
+//                Intent i = new Intent(v.getContext(), MainActivity.class);
+//                startActivity(i);
+//            }
+//
+//            //Returns appropriate message if no match is made
+//            else {
+//                Toast.makeText(getApplicationContext(),
+//                        "You have entered an incorrect username or password.",
+//                        Toast.LENGTH_SHORT).show();
+//                saveLoggedInUId(0, "", "");
+//            }
+//            stopManagingCursor(theUser);
+//            theUser.close();
+//        }
+//
+//        else {
+//            Toast.makeText(getApplicationContext(),
+//                    "query error",
+//                    Toast.LENGTH_SHORT).show();
+//        }
     }
 
     /**
@@ -155,10 +181,10 @@ public class LogInActivity extends Activity {
         startActivity(i);
     }
 
-    public  void saveLoggedInUId(long id, String username, String password) {
+    public  void saveLoggedInUId(String username, String password) {
         SharedPreferences settings = getSharedPreferences(LogInActivity.MY_PREFS, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putLong("uid", id);
+//        editor.putLong("uid", id);
         editor.putString("username", username);
         editor.putString("password", password);
         editor.commit();
