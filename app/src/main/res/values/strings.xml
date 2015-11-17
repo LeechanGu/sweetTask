@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SweeTask</string>
+    <string name="app_name">SweetTask</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -17,5 +17,10 @@
     <string name="title_activity_base_action_bar">BaseActionBarActivity</string>
     <string name="title_activity_my_location">MyLocationActivity</string>
     <string name="content">Content</string>
+
+    // For Parse
+    <!--For Parse SDK-->
+    <string name="parse_app_id">RkIHvpR9hEdejBizCivkmywOflupRH49ozgFHROt</string>
+    <string name="parse_client_key">ZqTOMc3F7JucJzOzJc0rt3st4Iffy2ij6njXc0QX</string>
 
 </resources>

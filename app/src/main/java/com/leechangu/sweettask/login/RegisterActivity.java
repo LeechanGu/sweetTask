@@ -3,7 +3,6 @@ package com.leechangu.sweettask.login;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,11 +14,15 @@ import com.leechangu.sweettask.R;
 import com.leechangu.sweettask.UtilRepository;
 import com.leechangu.sweettask.db.AccountDbAdapter;
 import com.leechangu.sweettask.login.LogInActivity;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 public class RegisterActivity extends Activity {
     private EditText newUsername;
     private EditText newPassword;
     private EditText newConfiPass;
+    private EditText newEmail;
     private Button registerButton;
     private Button backButton;
 
@@ -49,6 +52,7 @@ public class RegisterActivity extends Activity {
     private void initControls()
     {
         newUsername = (EditText) findViewById(R.id.nUsername);
+        newEmail = (EditText) findViewById(R.id.id_regiser_email);
         newPassword = (EditText) findViewById(R.id.nPassword);
         newConfiPass = (EditText) findViewById(R.id.nConfiPass);
         registerButton = (Button) findViewById(R.id.nRegister);
@@ -84,12 +88,13 @@ public class RegisterActivity extends Activity {
     private void RegisterMe(View v)
     {
         //Get user details.
-        String username = newUsername.getText().toString();
+        final String username = newUsername.getText().toString();
+        String email = newEmail.getText().toString();
         String password = newPassword.getText().toString();
         String confirmpassword = newConfiPass.getText().toString();
 
         //Check if all fields have been completed.
-        if (username.equals("") || password.equals("")){
+        if (username.equals("") || password.equals("") || email.equals("")){
             Toast.makeText(getApplicationContext(),
                     "Please ensure all fields have been completed.",
                     Toast.LENGTH_SHORT).show();
@@ -109,45 +114,69 @@ public class RegisterActivity extends Activity {
         //Encrypt password with MD5.
         password = UtilRepository.md5(password);
 
-        //Check database for existing users.
-        Cursor user = dbHelper.fetchUser(username, password);
-        if (user == null) {
-            Toast.makeText(getApplicationContext(), "query error",
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            startManagingCursor(user);
+        // SignUp using Parse
+        ParseUser user = new ParseUser();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setEmail(email);
 
-            //Check for duplicate usernames
-            if (user.getCount() > 0) {
-                Toast.makeText(getApplicationContext(), "The username is already registered",
-                        Toast.LENGTH_SHORT).show();
-                stopManagingCursor(user);
-                user.close();
-                return;
+//        // other fields can be set just like with ParseObject
+//        user.put("phone", "650-253-0000");
+
+        user.signUpInBackground(new SignUpCallback() {
+            public void done(ParseException e) {
+                if (e == null) {
+                    // Hooray! Let them use the app now.
+                    saveLoggedInUId(username, newPassword.getText().toString());
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(i);
+                } else {
+                    // Sign up didn't succeed. Look at the ParseException
+                    // to figure out what went wrong
+                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                }
             }
-            stopManagingCursor(user);
-            user.close();
+        });
 
-            //Create the new username.
-            long id = dbHelper.createUser(username, password);
-            if (id > 0) {
-                Toast.makeText(getApplicationContext(), "Your username was created",
-                        Toast.LENGTH_SHORT).show();
-                saveLoggedInUId(id, username, newPassword.getText().toString());
-                Intent i = new Intent(v.getContext(), MainActivity.class);
-                startActivity(i);
-
-                finish();
-            } else {
-                Toast.makeText(getApplicationContext(), "Failt to create new username",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
+//        //Check database for existing users.
+//        Cursor user = dbHelper.fetchUser(username, password);
+//        if (user == null) {
+//            Toast.makeText(getApplicationContext(), "query error",
+//                    Toast.LENGTH_SHORT).show();
+//        } else {
+//            startManagingCursor(user);
+//
+//            //Check for duplicate usernames
+//            if (user.getCount() > 0) {
+//                Toast.makeText(getApplicationContext(), "The username is already registered",
+//                        Toast.LENGTH_SHORT).show();
+//                stopManagingCursor(user);
+//                user.close();
+//                return;
+//            }
+//            stopManagingCursor(user);
+//            user.close();
+//
+//            //Create the new username.
+//            long id = dbHelper.createUser(username, password);
+//            if (id > 0) {
+//                Toast.makeText(getApplicationContext(), "Your username was created",
+//                        Toast.LENGTH_SHORT).show();
+//                saveLoggedInUId(id, username, newPassword.getText().toString());
+//                Intent i = new Intent(v.getContext(), MainActivity.class);
+//                startActivity(i);
+//
+//                finish();
+//            } else {
+//                Toast.makeText(getApplicationContext(), "Failt to create new username",
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        }
     }
-    public  void saveLoggedInUId(long id, String username, String password) {
+    public  void saveLoggedInUId(String username, String password) {
         SharedPreferences settings = getSharedPreferences(LogInActivity.MY_PREFS, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putLong("uid", id);
+//        editor.putLong("uid", id);
         editor.putString("username", username);
         editor.putString("password", password);
         editor.commit();

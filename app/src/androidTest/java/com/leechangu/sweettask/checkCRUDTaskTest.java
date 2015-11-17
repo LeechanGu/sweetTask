@@ -45,6 +45,11 @@ public class checkCRUDTaskTest extends ActivityInstrumentationTestCase2<MainActi
         sleep();
         Espresso.onView(ViewMatchers.withText("Delete")).perform(ViewActions.click());
         sleep();
+
+
+
+
+
     }
 
 

@@ -23,6 +23,18 @@
         android:gravity="left"
         android:selectAllOnFocus="true"
         android:lines="1"
+        android:id="@+id/id_regiser_email"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:layout_gravity="fill_horizontal"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"/>
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:selectAllOnFocus="true"
+        android:lines="1"
         android:id="@+id/nPassword"
         android:hint="Password"
         android:inputType="textPassword"
