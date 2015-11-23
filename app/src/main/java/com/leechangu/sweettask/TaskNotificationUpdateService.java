@@ -8,9 +8,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-//import com.leechangu.sweettask.db.TaskDb;
-
-import com.parse.ParseUser;
+import com.leechangu.sweettask.db.TaskDb;
 
 import java.util.Comparator;
 import java.util.List;
@@ -27,10 +25,10 @@ public class TaskNotificationUpdateService extends Service {
     }
 
 
-    private ParseTaskItem getEarliestNext(){
-        Set<ParseTaskItem> taskQueue = new TreeSet<ParseTaskItem>(new Comparator<ParseTaskItem>() {
+    private TaskItem getEarliestNext(){
+        Set<TaskItem> taskQueue = new TreeSet<TaskItem>(new Comparator<TaskItem>() {
             @Override
-            public int compare(ParseTaskItem lhs, ParseTaskItem rhs) {
+            public int compare(TaskItem lhs, TaskItem rhs) {
                 int result = 0;
                 long diff = lhs.calculateNextAlarmTime().getTimeInMillis() - rhs.calculateNextAlarmTime().getTimeInMillis();
                 if(diff>0){
@@ -42,13 +40,10 @@ public class TaskNotificationUpdateService extends Service {
             }
         }); //in order to get the earliest one
 
-//        TaskDb.init(getApplicationContext());
-//        List<TaskItem> taskItems = TaskDb.getAll();
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        List<ParseTaskItem> parseTaskItems = ParseTaskItemRepository.
-                getAllParseTasksFromParseByUserName(currentUser.getUsername());
+        TaskDb.init(getApplicationContext());
+        List<TaskItem> taskItems = TaskDb.getAll();
 
-        for(ParseTaskItem taskItem : parseTaskItems){
+        for(TaskItem taskItem : taskItems){
             if(taskItem.isActive())
                 taskQueue.add(taskItem);
         }
@@ -62,7 +57,7 @@ public class TaskNotificationUpdateService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("LogInfo",this.getClass().getSimpleName()+".onStartCommand()");
-        ParseTaskItem taskItem = getEarliestNext();
+        TaskItem taskItem = getEarliestNext();
         if(null != taskItem){
             Log.i("LogInfo",this.getClass().getSimpleName()+".onStartCommand(), null != taskItem");
             taskItem.schedule(getApplicationContext());

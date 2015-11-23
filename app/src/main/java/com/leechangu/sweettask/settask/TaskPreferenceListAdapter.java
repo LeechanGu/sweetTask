@@ -12,9 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckedTextView;
 import android.widget.TextView;
 
-//import com.leechangu.sweettask.TaskItem;
-
-import com.leechangu.sweettask.ParseTaskItem;
+import com.leechangu.sweettask.TaskItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,17 +21,17 @@ import java.util.List;
  * Created by Administrator on 2015/10/14.
  */
 public class TaskPreferenceListAdapter  extends BaseAdapter {
-    ParseTaskItem parseTaskItem;
+    TaskItem taskItem;
     private Context context;
     private String[] alarmTones;
     private String[] alarmTonePaths;
     private List<TaskPreference> preferences = new ArrayList<TaskPreference>();
-    private final String[] timeBasisOptions = {ParseTaskItem.TimeBasisEnum.DAILY.toString(),ParseTaskItem.TimeBasisEnum.WEEKLY.toString(),ParseTaskItem.TimeBasisEnum.MONTHLY.toString()};
+    private final String[] timeBasisOptions = {TaskItem.TimeBasisEnum.DAILY.toString(),TaskItem.TimeBasisEnum.WEEKLY.toString(),TaskItem.TimeBasisEnum.MONTHLY.toString()};
 
-    public TaskPreferenceListAdapter(Context context, ParseTaskItem parseTaskItem) {
+    public TaskPreferenceListAdapter(Context context, TaskItem taskItem) {
         setContext(context);
         loadAlarmTones();
-        DisplayPreferences(parseTaskItem);
+        DisplayPreferences(taskItem);
     }
 
     private void loadAlarmTones()
@@ -54,24 +52,24 @@ public class TaskPreferenceListAdapter  extends BaseAdapter {
         alarmsCursor.close();
     }
 
-    public void DisplayPreferences(ParseTaskItem parseTaskItem) {
-        this.parseTaskItem = parseTaskItem;
+    public void DisplayPreferences(TaskItem taskItem) {
+        this.taskItem = taskItem;
         preferences.clear();
-        preferences.add(new TaskPreference(TaskPreference.Key.TASK_ACTIVE, "Active", null, null, parseTaskItem.isActive(), TaskPreference.Type.BOOLEAN));
-        preferences.add(new TaskPreference(TaskPreference.Key.TASK_CONTENT, "Content", parseTaskItem.getContent(), null, parseTaskItem.getContent(), TaskPreference.Type.STRING));
-        preferences.add(new TaskPreference(TaskPreference.Key.TASK_REPEAT, "Repeat",parseTaskItem.getTimeBasisEnum().toString(), timeBasisOptions, parseTaskItem.getTimeBasisEnum(), TaskPreference.Type.LIST));
-        preferences.add(new TaskPreference(TaskPreference.Key.TASK_VIBRATE, "Vibrate",null, null, parseTaskItem.isVibrate(), TaskPreference.Type.BOOLEAN));
+        preferences.add(new TaskPreference(TaskPreference.Key.TASK_ACTIVE, "Active", null, null, taskItem.isActive(), TaskPreference.Type.BOOLEAN));
+        preferences.add(new TaskPreference(TaskPreference.Key.TASK_CONTENT, "Content", taskItem.getContent(), null, taskItem.getContent(), TaskPreference.Type.STRING));
+        preferences.add(new TaskPreference(TaskPreference.Key.TASK_REPEAT, "Repeat",taskItem.getTimeBasisEnum().toString(), timeBasisOptions, taskItem.getTimeBasisEnum(), TaskPreference.Type.LIST));
+        preferences.add(new TaskPreference(TaskPreference.Key.TASK_VIBRATE, "Vibrate",null, null, taskItem.isVibrate(), TaskPreference.Type.BOOLEAN));
 
-        Uri alarmToneUri = Uri.parse(parseTaskItem.getAlarmTonePath());
+        Uri alarmToneUri = Uri.parse(taskItem.getAlarmTonePath());
         Ringtone alarmTone = RingtoneManager.getRingtone(getContext(), alarmToneUri);
 
-        if(alarmTone instanceof Ringtone && !parseTaskItem.getAlarmTonePath().equalsIgnoreCase("")){
-            preferences.add(new TaskPreference(TaskPreference.Key.TASK_TONE, "Ringtone", alarmTone.getTitle(getContext()),alarmTones, parseTaskItem.getAlarmTonePath(), TaskPreference.Type.LIST));
+        if(alarmTone instanceof Ringtone && !taskItem.getAlarmTonePath().equalsIgnoreCase("")){
+            preferences.add(new TaskPreference(TaskPreference.Key.TASK_TONE, "Ringtone", alarmTone.getTitle(getContext()),alarmTones, taskItem.getAlarmTonePath(), TaskPreference.Type.LIST));
         }else{
             preferences.add(new TaskPreference(TaskPreference.Key.TASK_TONE, "Ringtone", getAlarmTones()[0],alarmTones, null, TaskPreference.Type.LIST));
         }
-        preferences.add(new TaskPreference(TaskPreference.Key.TASK_MAP, "Map Task", parseTaskItem.getMapInfo(), null, parseTaskItem.getMapInfo(), TaskPreference.Type.MAP));
-        preferences.add(new TaskPreference(TaskPreference.Key.TASK_PHOTO, "Photo Task", null, null, parseTaskItem.isPhotoTask(), TaskPreference.Type.BOOLEAN));
+        preferences.add(new TaskPreference(TaskPreference.Key.TASK_MAP, "Map Task", taskItem.getMapInfo(), null, taskItem.getMapInfo(), TaskPreference.Type.MAP));
+        preferences.add(new TaskPreference(TaskPreference.Key.TASK_PHOTO, "Photo Task", null, null, taskItem.isPhotoTask(), TaskPreference.Type.BOOLEAN));
 
     }
 

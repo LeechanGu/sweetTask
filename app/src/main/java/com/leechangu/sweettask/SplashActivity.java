@@ -30,7 +30,7 @@ public class SplashActivity extends Activity {
         LinearLayout linearLayout = (LinearLayout)findViewById(R.id.id_layout_splash);
         AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f,1.0f);
         alphaAnimation.setFillAfter(true);
-        alphaAnimation.setDuration(3000);
+        alphaAnimation.setDuration(1000);
         linearLayout.startAnimation(alphaAnimation);
 
         splashTimer = new Timer();
@@ -40,7 +40,7 @@ public class SplashActivity extends Activity {
             public void run()
             {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

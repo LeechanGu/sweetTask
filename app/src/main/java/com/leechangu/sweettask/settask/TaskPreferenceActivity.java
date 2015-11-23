@@ -25,17 +25,14 @@ import android.widget.Toast;
 import com.leechangu.sweettask.BaseActionBarActivity;
 import com.leechangu.sweettask.MapCircle;
 import com.leechangu.sweettask.MapsActivity;
-import com.leechangu.sweettask.ParseTaskItem;
-import com.leechangu.sweettask.ParseTaskItemRepository;
 import com.leechangu.sweettask.R;
-//import com.leechangu.sweettask.TaskItem;
-//import com.leechangu.sweettask.db.TaskDb;
+import com.leechangu.sweettask.TaskItem;
+import com.leechangu.sweettask.db.TaskDb;
 import com.leechangu.sweettask.settask.TaskPreference.Key;
 
 public class TaskPreferenceActivity extends BaseActionBarActivity {
 
-//    private TaskItem taskItem;
-    private ParseTaskItem parseTaskItem;
+    private TaskItem taskItem;
     private TaskPreferenceListAdapter listAdapter;
     private ListView listView;
     private MediaPlayer mediaPlayer;
@@ -51,14 +48,14 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && bundle.containsKey("taskItem")) {
-            setTaskItem((ParseTaskItem) bundle.getSerializable("taskItem"));
+            setTaskItem((TaskItem) bundle.getSerializable("taskItem"));
         } else {
-            setTaskItem(new ParseTaskItem());
+            setTaskItem(new TaskItem());
         }
         if (bundle != null && bundle.containsKey("adapter")) {
             setListAdapter((TaskPreferenceListAdapter) bundle.getSerializable("adapter"));
         } else {
-            setListAdapter(new TaskPreferenceListAdapter(this, getParseTaskItem()));
+            setListAdapter(new TaskPreferenceListAdapter(this, getTaskItem()));
         }
 
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -76,17 +73,17 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                         ((CheckedTextView) v).setChecked(checked);
                         switch (TaskPreference.getKey()) {
                             case TASK_ACTIVE:
-                                parseTaskItem.setActive(checked);
+                                taskItem.setActive(checked);
                                 break;
                             case TASK_VIBRATE:
-                                parseTaskItem.setVibrate(checked);
+                                taskItem.setVibrate(checked);
                                 if (checked) {
                                     Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                                     vibrator.vibrate(1000);
                                 }
                                 break;
                             case TASK_PHOTO:
-                                parseTaskItem.setIsPhotoTask(checked);
+                                taskItem.setIsPhotoTask(checked);
                                 break;
                         }
                         TaskPreference.setValue(checked);
@@ -111,10 +108,10 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                                 TaskPreference.setValue(input.getText().toString());
 
                                 if (TaskPreference.getKey() == Key.TASK_CONTENT) {
-                                    parseTaskItem.setContent(TaskPreference.getValue().toString());
+                                    taskItem.setContent(TaskPreference.getValue().toString());
                                 }
 
-                                taskPreferenceListAdapter.DisplayPreferences(getParseTaskItem());
+                                taskPreferenceListAdapter.DisplayPreferences(getTaskItem());
                                 taskPreferenceListAdapter.notifyDataSetChanged();
                             }
                         });
@@ -133,11 +130,11 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 switch (TaskPreference.getKey()) {
                                     case TASK_REPEAT:
-                                        parseTaskItem.setTimeBasis(ParseTaskItem.TimeBasisEnum.values()[which]);
+                                        taskItem.setTimeBasis(TaskItem.TimeBasisEnum.values()[which]);
                                         break;
                                     case TASK_TONE:
-                                        parseTaskItem.setAlarmTonePath(taskPreferenceListAdapter.getAlarmTonePaths()[which]);
-                                        if (parseTaskItem.getAlarmTonePath() != null) {
+                                        taskItem.setAlarmTonePath(taskPreferenceListAdapter.getAlarmTonePaths()[which]);
+                                        if (taskItem.getAlarmTonePath() != null) {
                                             if (mediaPlayer == null) {
                                                 mediaPlayer = new MediaPlayer();
                                             } else {
@@ -148,7 +145,7 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                                             try {
                                                 // mediaPlayer.setVolume(1.0f, 1.0f);
                                                 mediaPlayer.setVolume(0.2f, 0.2f);
-                                                mediaPlayer.setDataSource(TaskPreferenceActivity.this, Uri.parse(parseTaskItem.getAlarmTonePath()));
+                                                mediaPlayer.setDataSource(TaskPreferenceActivity.this, Uri.parse(taskItem.getAlarmTonePath()));
                                                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
                                                 mediaPlayer.setLooping(false);
                                                 mediaPlayer.prepare();
@@ -189,7 +186,7 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                                     default:
                                         break;
                                 }
-                                taskPreferenceListAdapter.DisplayPreferences(getParseTaskItem());
+                                taskPreferenceListAdapter.DisplayPreferences(getTaskItem());
                                 taskPreferenceListAdapter.notifyDataSetChanged();
                             }
                         });
@@ -200,7 +197,7 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                         {
                             Intent intent = new Intent();
                             intent.setClass(TaskPreferenceActivity.this, MapsActivity.class);
-                            intent.putExtra("map_info",parseTaskItem.getMapInfo());
+                            intent.putExtra("map_info",taskItem.getMapInfo());
                             startActivityForResult(intent, REQUESTCODE_MAP);
                         }
                         break;
@@ -240,15 +237,15 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                 Bundle bundle = data.getExtras();
                 String mapInfo = bundle.getString(MapsActivity.MAP_RESULT);
                 if (!mapInfo.equals(MapCircle.NO_MAP)) {
-                    parseTaskItem.setMapInfo(mapInfo);
+                    taskItem.setMapInfo(mapInfo);
                     updatePreferenceList();
                 }
                 else
                 {
-                    parseTaskItem.setMapInfo(null);
+                    taskItem.setMapInfo(null);
                     updatePreferenceList();
                 }
-                taskPreferenceListAdapter.DisplayPreferences(getParseTaskItem());
+                taskPreferenceListAdapter.DisplayPreferences(getTaskItem());
                 taskPreferenceListAdapter.notifyDataSetChanged();
             }
         }
@@ -275,16 +272,14 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_save:
-//                TaskDb.init(getApplicationContext());
-                if (getParseTaskItem().getId()==null) {
-//                    TaskDb.create(getTaskItem());
-                    ParseTaskItemRepository.createParseTask(getParseTaskItem());
+                TaskDb.init(getApplicationContext());
+                if (getTaskItem().getId() < 1) {
+                    TaskDb.create(getTaskItem());
                 } else {
-//                    TaskDb.update(getTaskItem());
-                    ParseTaskItemRepository.updateParseTask(getParseTaskItem());
+                    TaskDb.update(getTaskItem());
                 }
                 //callMathAlarmScheduleService();
-                Toast.makeText(TaskPreferenceActivity.this, getParseTaskItem().getTimeUntilNextAlarmMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(TaskPreferenceActivity.this, getTaskItem().getTimeUntilNextAlarmMessage(), Toast.LENGTH_LONG).show();
                 finish();
                 break;
             case R.id.menu_item_delete:
@@ -296,13 +291,12 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-//                TaskDb.init(getApplicationContext());
-                        if (getParseTaskItem().getId()==null) {
-//                    TaskDb.create(getTaskItem());
-                            ParseTaskItemRepository.createParseTask(getParseTaskItem());
+                        TaskDb.init(getApplicationContext());
+                        if (getTaskItem().getId() < 1) {
+                            // Alarm not saved
                         } else {
-//                    TaskDb.update(getTaskItem());
-                            ParseTaskItemRepository.deleteParseTask(getParseTaskItem());
+                            TaskDb.deleteEntry(taskItem);
+                            //callMathAlarmScheduleService();
                         }
                         finish();
                     }
@@ -319,8 +313,8 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setTaskItem(ParseTaskItem taskItem) {
-        this.parseTaskItem = taskItem;
+    public void setTaskItem(TaskItem taskItem) {
+        this.taskItem = taskItem;
     }
 
     public void setListAdapter(TaskPreferenceListAdapter listAdapter) {
@@ -338,16 +332,7 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
         return listView;
     }
 
-//    public ParseTaskItem getTaskItem() {
-//        return parseTaskItem;
-//    }
-    public ParseTaskItem getParseTaskItem() {
-        return parseTaskItem;
-    }
-
-
-    // Toast at this Context
-    public void toastSomething(String message){
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+    public TaskItem getTaskItem() {
+        return taskItem;
     }
 }

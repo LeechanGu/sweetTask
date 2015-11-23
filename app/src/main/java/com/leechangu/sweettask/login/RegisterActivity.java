@@ -1,7 +1,6 @@
 package com.leechangu.sweettask.login;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -88,12 +87,6 @@ public class RegisterActivity extends Activity {
      */
     private void RegisterMe(View v)
     {
-
-        // ProgressDialog
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Waiting for server...");
-        progressDialog.show();
-
         //Get user details.
         final String username = newUsername.getText().toString();
         String email = newEmail.getText().toString();
@@ -136,7 +129,6 @@ public class RegisterActivity extends Activity {
                     // Hooray! Let them use the app now.
                     saveLoggedInUId(username, newPassword.getText().toString());
                     Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                    progressDialog.dismiss();
                     startActivity(i);
                 } else {
                     // Sign up didn't succeed. Look at the ParseException
