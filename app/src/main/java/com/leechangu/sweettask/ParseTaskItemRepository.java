@@ -2,8 +2,6 @@ package com.leechangu.sweettask;
 
 
 import com.leechangu.sweettask.settask.TaskPreferenceActivity;
-import com.parse.DeleteCallback;
-import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
