@@ -1,6 +1,5 @@
 package com.leechangu.sweettask;
 
-import android.util.Log;
 
 import com.leechangu.sweettask.settask.TaskPreferenceActivity;
 import com.parse.DeleteCallback;
@@ -179,7 +178,6 @@ public class ParseTaskItemRepository {
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseTaskItem");
         try {
-            Log.d("TAG DELETE", parseTaskItem.getId()+"");
             ParseObject parseObject = query.get(parseTaskItem.getId());
             parseObject.delete();
         } catch (ParseException e) {
