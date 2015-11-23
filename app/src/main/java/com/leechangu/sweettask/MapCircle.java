@@ -2,8 +2,10 @@ package com.leechangu.sweettask;
 
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.internal.zzb;
 
 import java.io.Serializable;
+import java.io.StringReader;
 import java.util.Scanner;
 
 /**
@@ -15,23 +17,9 @@ public class MapCircle implements Serializable {
     public MapCircle(Circle circle) {
         this.circle = circle;
     }
-
-    public static Circle setLatLongRadius(Circle circle, String latLongRadius) {
-        Scanner sc = new Scanner(latLongRadius);
-        double lat = sc.nextDouble(),
-                lng = sc.nextDouble(),
-                radius = sc.nextDouble();
-        circle.setCenter(new LatLng(lat, lng));
-        circle.setRadius(radius);
-        return circle;
-    }
-
-    public static LatLng getLatLngFromString(String latLongRadius)
+    public void setRadius(double radius)
     {
-        Scanner sc = new Scanner(latLongRadius);
-        double lat = sc.nextDouble(),
-                lng = sc.nextDouble();
-        return new LatLng(lat, lng);
+        circle.setRadius(radius);
     }
 
     public double getRadius()
@@ -39,9 +27,9 @@ public class MapCircle implements Serializable {
         return circle.getRadius();
     }
 
-    public void setRadius(double radius)
+    public void setCenter(LatLng center)
     {
-        circle.setRadius(radius);
+        circle.setCenter(center);
     }
 
     public LatLng getCenter()
@@ -49,13 +37,19 @@ public class MapCircle implements Serializable {
         return circle.getCenter();
     }
 
-    public void setCenter(LatLng center)
-    {
-        circle.setCenter(center);
-    }
-
     @Override
     public String toString() {
-        return circle.getCenter().latitude + " " + circle.getCenter().longitude + " " + circle.getRadius();
+        return circle.getCenter().latitude+" "+circle.getCenter().longitude+" "+circle.getRadius();
+    }
+
+    public static Circle setLatLongRadius(Circle circle, String latLongRadius )
+    {
+        Scanner sc = new Scanner(latLongRadius);
+        double lat = sc.nextDouble(),
+                lng = sc.nextDouble(),
+                radius = sc.nextDouble();
+        circle.setCenter(new LatLng(lat,lng));
+        circle.setRadius(radius);
+        return circle;
     }
 }

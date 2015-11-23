@@ -1,13 +1,5 @@
 package com.leechangu.sweettask;
 
-import android.content.Intent;
-import android.graphics.Color;
-import android.location.Location;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.TextView;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -24,8 +16,20 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.leechangu.sweettask.settask.TaskPreferenceActivity;
+
+import android.content.Intent;
+import android.graphics.Color;
+import android.location.Location;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Date;
 
@@ -43,23 +47,25 @@ public class MyLocationActivity extends BaseActionBarActivity
         OnMyLocationButtonClickListener,
         OnMapReadyCallback {
 
+    private GoogleApiClient mGoogleApiClient;
+    private MapCircle mapCircle;
+    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private static final LatLng HOME = new LatLng(43.474521,-80.537389);
+    private int DEFAULT_COLOR = Color.argb(30, Color.red(Color.BLUE), Color.green(Color.BLUE),
+            Color.blue(Color.BLUE));
+
+    private TextView distanceTextView;
+    private TextView goalTextView;
+    private TextView finishTextView;
+    private boolean finishMapTask = false;
     public final static String LOCATION_RESULT = "LOCATION_RESULT";
-    private static final LatLng HOME = new LatLng(43.474521, -80.537389);
+
     // These settings are the same as the settings for the map. They will in fact give you updates
     // at the maximal rates currently possible.
     private static final LocationRequest REQUEST = LocationRequest.create()
             .setInterval(5000)         // 5 seconds
             .setFastestInterval(16)    // 16ms = 60fps
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    private GoogleApiClient mGoogleApiClient;
-    private MapCircle mapCircle;
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private int DEFAULT_COLOR = Color.argb(30, Color.red(Color.BLUE), Color.green(Color.BLUE),
-            Color.blue(Color.BLUE));
-    private TextView distanceTextView;
-    private TextView goalTextView;
-    private TextView finishTextView;
-    private boolean finishMapTask = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,9 +95,6 @@ public class MyLocationActivity extends BaseActionBarActivity
                 .fillColor(DEFAULT_COLOR));
         c = MapCircle.setLatLongRadius(c,mapInfo);
         mapCircle = new MapCircle(c);
-
-        addMarker(mMap, MapCircle.getLatLngFromString(mapInfo));
-
         //mMap.location();
         CameraPosition position = new CameraPosition.Builder()
                 .target(HOME)
@@ -135,7 +138,7 @@ public class MyLocationActivity extends BaseActionBarActivity
             homeLocation.setTime(new Date().getTime()); //Set time as current Date
             float distance = nowLocation.distanceTo(homeLocation);
             distanceTextView.setText("" + distance);
-            if (distance < mapCircle.getRadius()) {
+            if (distance>mapCircle.getRadius()) {
                 finishTextView.setText("( finished )");
                 finishMapTask = true;
             }
@@ -195,12 +198,14 @@ public class MyLocationActivity extends BaseActionBarActivity
             // Try to obtain the map from the SupportMapFragment.
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
-
+            // Check if we were successful in obtaining the map.
+            if (mMap != null) {
+                setUpMap();
+            }
         }
     }
-
-    private Marker addMarker(GoogleMap map, LatLng center) {
-        return map.addMarker(new MarkerOptions().position(center).title("Home"));
+    private void setUpMap() {
+        mMap.addMarker(new MarkerOptions().position(HOME).title("Home"));
     }
 
     @Override

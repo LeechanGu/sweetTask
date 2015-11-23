@@ -22,6 +22,5 @@
     <!--For Parse SDK-->
     <string name="parse_app_id">RkIHvpR9hEdejBizCivkmywOflupRH49ozgFHROt</string>
     <string name="parse_client_key">ZqTOMc3F7JucJzOzJc0rt3st4Iffy2ij6njXc0QX</string>
-    <string name="title_activity_task_calendar">TaskCalendarActivity</string>
 
 </resources>
