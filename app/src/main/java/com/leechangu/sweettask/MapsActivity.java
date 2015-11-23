@@ -12,30 +12,32 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.leechangu.sweettask.settask.TaskPreferenceActivity;
 
-public class MapsActivity extends BaseActionBarActivity implements SeekBar.OnSeekBarChangeListener {
+public class MapsActivity extends BaseActionBarActivity implements SeekBar.OnSeekBarChangeListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
 
+    public final static String MAP_RESULT = "MAP_RESULT";
     private static final LatLng HOME = new LatLng(43.474521,-80.537389);
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private SeekBar radiusSeekBar;
     private MapCircle mapCircle;
-    private int DEFAULT_RADIUS = 2000;
-    private int RADIUS_MAX = 20000;
+    private int DEFAULT_RADIUS = 200;
+    private int RADIUS_MAX = 2000;
     private int DEFAULT_COLOR = Color.argb(30, Color.red(Color.BLUE), Color.green(Color.BLUE),
             Color.blue(Color.BLUE));
     private float DEFAULT_ZOOM_FACTOR = 13.0f;
     private ImageButton homeButton;
     private TextView distanceTextView;
     private UiSettings mUiSettings;
-
-    public final static String MAP_RESULT = "MAP_RESULT";
+    private Marker homeMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,9 @@ public class MapsActivity extends BaseActionBarActivity implements SeekBar.OnSee
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
 
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
         mMap.setMyLocationEnabled(true);
         mUiSettings = mMap.getUiSettings();
         mUiSettings.setZoomControlsEnabled(true);
@@ -81,7 +86,8 @@ public class MapsActivity extends BaseActionBarActivity implements SeekBar.OnSee
             c = MapCircle.setLatLongRadius(c,mapInfo);
         }
         mapCircle = new MapCircle(c);
-        distanceTextView.setText(radiusSeekBar.getProgress()+" m");
+        homeMarker = addMarker(mMap, MapCircle.getLatLngFromString(mapInfo));
+        distanceTextView.setText(radiusSeekBar.getProgress() + " m");
 
         zoomBackHome();
     }
@@ -115,31 +121,12 @@ public class MapsActivity extends BaseActionBarActivity implements SeekBar.OnSee
         setUpMapIfNeeded();
     }
 
-    /**
-     * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
-     * installed) and the map has not already been instantiated.. This will ensure that we only ever
-     * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p>
-     * If it isn't installed {@link SupportMapFragment} (and
-     * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
-     * install/update the Google Play services APK on their device.
-     * <p>
-     * A user can return to this FragmentActivity after following the prompt and correctly
-     * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
-     * have been completely destroyed during this process (it is likely that it would only be
-     * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
-     * method in {@link #onResume()} to guarantee that it will be called.
-     */
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
-            // Check if we were successful in obtaining the map.
-            if (mMap != null) {
-                setUpMap();
-            }
         }
     }
 
@@ -149,8 +136,8 @@ public class MapsActivity extends BaseActionBarActivity implements SeekBar.OnSee
      * <p>
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
-    private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(HOME).title("HOME"));
+    private Marker addMarker(GoogleMap map, LatLng center) {
+        return map.addMarker(new MarkerOptions().position(center).title("Home"));
     }
 
     @Override
@@ -181,5 +168,16 @@ public class MapsActivity extends BaseActionBarActivity implements SeekBar.OnSee
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        map.setOnMapClickListener(this);
+    }
+
+    @Override
+    public void onMapClick(LatLng point) {
+        mapCircle.setCenter(point);
+        homeMarker.setPosition(point);
     }
 }
