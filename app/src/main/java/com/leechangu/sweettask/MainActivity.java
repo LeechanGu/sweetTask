@@ -40,6 +40,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     private TaskArrayAdapter taskArrayAdapter;
     private final static String EDIT_STRING = "Edit";
     private final static String DELETE_STRING = "Delete";
+    private final static String HISTORY_STRING = "History";
     public final static int REQUESTCODE_LOCATION = 2;
     List<CheckBox> checkBoxeList;
 
@@ -158,6 +159,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                         if (allChecked) {
                             Toast.makeText(getApplicationContext(), "Congratulation!", Toast.LENGTH_SHORT).show();
                             taskItem.setFinished(true);
+                            taskItem.addDateToCompleteDates();
                             TaskDb.update(taskItem);
                             updateAlarmList();
                         }
@@ -212,6 +214,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, v.getId(), 0, HISTORY_STRING);
         menu.add(0, v.getId(), 0, EDIT_STRING);
         menu.add(0, v.getId(), 0, DELETE_STRING);
     }
@@ -222,8 +225,14 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
         TaskItem taskItem = (TaskItem)taskListView.getItemAtPosition(itemInfo.position);
         switch (item.toString())
         {
-            case EDIT_STRING:
+            case HISTORY_STRING:
                 Intent intent = new Intent();
+                intent.setClass(this, TaskCalendarActivity.class);
+                intent.putExtra("taskItem", taskItem);
+                startActivity(intent);
+                break;
+            case EDIT_STRING:
+                intent = new Intent();
                 intent.setClass(this, TaskPreferenceActivity.class);
                 intent.putExtra("taskItem",taskItem);
                 startActivity(intent);

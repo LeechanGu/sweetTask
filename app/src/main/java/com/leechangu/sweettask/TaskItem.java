@@ -6,8 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2015/10/2.
@@ -32,7 +39,48 @@ public class TaskItem implements Serializable {
 
     private boolean isPhotoTaskFinished = false;
     private boolean isMapTaskFinished = false;
+    List<Date> completeDates = new LinkedList<Date>();  // newly added
 
+
+    public List<Date> getCompleteDates() {
+        return completeDates;
+    }
+
+    public String getCompleteDatesAsString() {
+        JSONArray array = new JSONArray();
+        try {
+            for (int i = 0; i < completeDates.size(); i++) {
+                JSONObject eachObject = new JSONObject();
+                eachObject.put("date", completeDates.get(i).getTime());
+                array.put(eachObject);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return array.toString();
+    }
+
+    public void setCompleteDatesByString(String json) {
+        JSONArray array = null;
+        completeDates.clear();
+        try {
+            array = new JSONArray(json);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                completeDates.add(new Date(object.getLong("date")));
+            }
+        } catch (JSONException e) {
+            completeDates.add(new Date());
+        }
+    }
+
+    public void addDateToCompleteDates() {
+        completeDates.add(new Date(System.currentTimeMillis()));
+    }
+
+    public void setCompleteDates(List<Date> completeDates) {
+        this.completeDates = completeDates;
+    }
 
     public boolean isPhotoTaskFinished() {
         return isPhotoTaskFinished;

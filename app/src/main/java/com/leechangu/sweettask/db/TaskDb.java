@@ -21,7 +21,7 @@ public class TaskDb extends SQLiteOpenHelper {
     static SQLiteDatabase database = null;
 
     static final String DATABASE_NAME = "DB";
-    static final int DATABASE_VERSION = 5;
+    static final int DATABASE_VERSION = 7;
 
     public static final String TASK_TABLE = "tasks";
     public static final String COLUMN_ID = "_id";
@@ -34,6 +34,7 @@ public class TaskDb extends SQLiteOpenHelper {
     public static final String COLUMN_MAP = "task_map";
     public static final String COLUMN_PHOTO = "task_photo";
     public static final String COLUMN_FINISHED = "task_finished";
+    public static final String COLUMN_COMPLETE_DATE = "complete_date";
 
     private static final String[] columns = new String[] {
             COLUMN_ID,
@@ -45,7 +46,8 @@ public class TaskDb extends SQLiteOpenHelper {
             COLUMN_CONTENT,
             COLUMN_MAP,
             COLUMN_PHOTO,
-            COLUMN_FINISHED
+            COLUMN_FINISHED,
+            COLUMN_COMPLETE_DATE
     };
 
     public static void init(Context context) {
@@ -90,6 +92,7 @@ public class TaskDb extends SQLiteOpenHelper {
         cv.put(COLUMN_MAP,taskItem.getMapInfo());
         cv.put(COLUMN_PHOTO, taskItem.isPhotoTask());
         cv.put(COLUMN_FINISHED,taskItem.isFinished());
+        cv.put(COLUMN_COMPLETE_DATE, taskItem.getCompleteDatesAsString());
         return cv;
     }
     public static int deleteEntry(TaskItem taskItem){
@@ -130,7 +133,8 @@ public class TaskDb extends SQLiteOpenHelper {
         taskItem.setContent(cursor.getString(cursor.getColumnIndex(COLUMN_CONTENT)));
         taskItem.setMapInfo(cursor.getString(cursor.getColumnIndex(COLUMN_MAP)));
         taskItem.setIsPhotoTask(cursor.getInt(cursor.getColumnIndex(COLUMN_PHOTO)) == 1);
-        taskItem.setFinished(cursor.getInt(cursor.getColumnIndex(COLUMN_FINISHED))==1);
+        taskItem.setFinished(cursor.getInt(cursor.getColumnIndex(COLUMN_FINISHED)) == 1);
+        taskItem.setCompleteDatesByString(cursor.getString(cursor.getColumnIndex(COLUMN_COMPLETE_DATE)));
         return taskItem;
     }
 
@@ -155,7 +159,8 @@ public class TaskDb extends SQLiteOpenHelper {
                 + COLUMN_MAP + " TEXT DEFAULT NULL, "
                 + COLUMN_CONTENT + " TEXT NOT NULL,"
                 + COLUMN_PHOTO + " INTEGER NOT NULL, "
-                + COLUMN_FINISHED + " INTEGER NOT NULL)");
+                + COLUMN_FINISHED + " INTEGER NOT NULL,"
+                + COLUMN_COMPLETE_DATE + " TEXT)");
     }
 
     @Override
