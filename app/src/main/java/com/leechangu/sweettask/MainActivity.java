@@ -38,7 +38,6 @@ import java.util.List;
 public class MainActivity extends BaseActionBarActivity implements CheckBox.OnClickListener{
     private ListView taskListView;
     private String username;
-//    private TaskArrayAdapter taskArrayAdapter;
     private ParseTaskArrayAdapter parseTaskArrayAdapter;
     private final static String EDIT_STRING = "Edit";
     private final static String DELETE_STRING = "Delete";
