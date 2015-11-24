@@ -81,7 +81,7 @@ public class MapsActivity extends BaseActionBarActivity implements SeekBar.OnSee
                 .fillColor(DEFAULT_COLOR));
         Bundle bundle = getIntent().getExtras();
         String mapInfo = bundle.getString("map_info");
-        if (mapInfo!=null)
+        if (!mapInfo.equals(""))
         {
             c = MapCircle.setLatLongRadius(c,mapInfo);
         }
