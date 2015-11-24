@@ -19,7 +19,7 @@ public class TaskCalendarActivity extends AppCompatActivity {
 
 
         Bundle bundle = getIntent().getExtras();
-        TaskItem taskItem = (TaskItem) bundle.get("taskItem");
+        ParseTaskItem taskItem = (ParseTaskItem) bundle.get("taskItem");
 
 
         // calendarView
@@ -28,9 +28,9 @@ public class TaskCalendarActivity extends AppCompatActivity {
         setDatesSelected(calendarView, taskItem.getCompleteDates());
     }
 
-    private void setDatesSelected(MaterialCalendarView calendarView, List<Date> dateList) {
-        for (Date date : dateList) {
-            calendarView.setDateSelected(date, true);
+    private void setDatesSelected(MaterialCalendarView calendarView, List<Long> dateList) {
+        for (Long date : dateList) {
+            calendarView.setDateSelected(new Date(date), true);
         }
     }
 

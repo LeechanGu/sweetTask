@@ -8,6 +8,8 @@ import android.util.Log;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by CharlesGao on 15-11-17.
@@ -16,10 +18,6 @@ import java.util.Calendar;
  */
 public class ParseTaskItem implements Serializable {
 
-
-    public enum TimeBasisEnum {
-        DAILY, WEEKLY, MONTHLY
-    }
 
     private static final long serialVersionUID = 8699489847426803789L;
     private String id = null; // This Id is the ObjectId from Parse
@@ -32,14 +30,24 @@ public class ParseTaskItem implements Serializable {
     private boolean isMapTask = false;
     private boolean ifAllTasksFinished = false;
     private String mapInfo = "";
-//    private String belonger;
-
+    private List<Long> completeDates = new LinkedList<Long>();
     private String alarmTonePath = "";//RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString();
-
+//    private String belonger;
     private boolean isPhotoTaskFinished = false;
     private boolean isMapTaskFinished = false;
 
-//    public String getBelonger() {
+    public ParseTaskItem() {
+    }
+
+    public List<Long> getCompleteDates() {
+        return completeDates;
+    }
+
+    public void addCompleteDate() {
+        completeDates.add(System.currentTimeMillis());
+    }
+
+    //    public String getBelonger() {
 //        return belonger;
 //    }
 //
@@ -90,20 +98,12 @@ public class ParseTaskItem implements Serializable {
         this.id = id;
     }
 
-    public void setAlarmTime(Calendar alarmTime) {
-        this.alarmTime = alarmTime;
-    }
-
     public Calendar getAlarmTime() {
         return alarmTime;
     }
 
-    public void setVibrate(boolean vibrate) {
-        this.vibrate = vibrate;
-    }
-
-    public void setActive(boolean activated) {
-        this.active = activated;
+    public void setAlarmTime(Calendar alarmTime) {
+        this.alarmTime = alarmTime;
     }
 
     public boolean ifAllTasksFinished() {
@@ -130,60 +130,58 @@ public class ParseTaskItem implements Serializable {
         this.mapInfo = mapInfo;
     }
 
-    public ParseTaskItem() {
-    }
-
     public void setTimeBasis(TimeBasisEnum timeBasis) {
         this.timeBasis = timeBasis;
     }
 
     public Calendar calculateNextAlarmTime() {
         alarmTime = Calendar.getInstance();
-        alarmTime.set(Calendar.MILLISECOND,0);
-        alarmTime.set(Calendar.SECOND,0);
-        alarmTime.set(Calendar.MINUTE,0);
-        alarmTime.set(Calendar.HOUR_OF_DAY,0);
-        switch (timeBasis)
-        {
+        alarmTime.set(Calendar.MILLISECOND, 0);
+        alarmTime.set(Calendar.SECOND, 0);
+        alarmTime.set(Calendar.MINUTE, 0);
+        alarmTime.set(Calendar.HOUR_OF_DAY, 0);
+        switch (timeBasis) {
             case DAILY:
                 alarmTime.add(Calendar.DATE, 1);
                 break;
             case WEEKLY:
-                alarmTime.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
+                alarmTime.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
                 alarmTime.add(Calendar.DATE, 7);
                 break;
             case MONTHLY:
-                alarmTime.set(Calendar.DAY_OF_MONTH,1);
+                alarmTime.set(Calendar.DAY_OF_MONTH, 1);
                 alarmTime.add(Calendar.MONTH, 1);
                 break;
         }
         return alarmTime;
     }
 
-
-    public void setContent(String taskContent)
-    {
-        this.taskContent =taskContent ;
-    }
-
-
-    public String getContent()
-    {
+    public String getContent() {
         return taskContent;
     }
 
-    public ParseTaskItem.TimeBasisEnum getTimeBasisEnum()
-    {
-        return timeBasis;
+    public void setContent(String taskContent) {
+        this.taskContent = taskContent;
     }
 
+    public ParseTaskItem.TimeBasisEnum getTimeBasisEnum() {
+        return timeBasis;
+    }
 
     public boolean isVibrate() {
         return vibrate;
     }
 
+    public void setVibrate(boolean vibrate) {
+        this.vibrate = vibrate;
+    }
+
     public boolean isActive() {
         return active;
+    }
+
+    public void setActive(boolean activated) {
+        this.active = activated;
     }
 
     public void schedule(Context context) {
@@ -195,7 +193,6 @@ public class ParseTaskItem implements Serializable {
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, this.calculateNextAlarmTime().getTimeInMillis() - 10 * 60 * 1000, pendingIntent);
     }
-
 
     public String getTimeUntilNextAlarmMessage(){
         long timeDifference = calculateNextAlarmTime().getTimeInMillis() - System.currentTimeMillis();
@@ -222,6 +219,11 @@ public class ParseTaskItem implements Serializable {
             }
         }
         return alert;
+    }
+
+
+    public enum TimeBasisEnum {
+        DAILY, WEEKLY, MONTHLY
     }
 
 

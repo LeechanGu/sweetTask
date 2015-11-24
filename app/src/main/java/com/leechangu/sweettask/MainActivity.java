@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-//import com.leechangu.sweettask.db.TaskDb;
 import com.leechangu.sweettask.settask.TaskPreferenceActivity;
 import com.parse.ParseUser;
 
@@ -36,30 +35,29 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+//import com.leechangu.sweettask.db.TaskDb;
+
 public class MainActivity extends BaseActionBarActivity implements CheckBox.OnClickListener{
-    private ListView taskListView;
-    private String username;
-//    private TaskArrayAdapter taskArrayAdapter;
-    private ParseTaskArrayAdapter parseTaskArrayAdapter;
+    public final static int REQUESTCODE_LOCATION = 2;
     private final static String EDIT_STRING = "Edit";
     private final static String DELETE_STRING = "Delete";
     private final static String HISTORY_STRING = "History";
-    public final static int REQUESTCODE_LOCATION = 2;
-    List<CheckBox> checkBoxeList;
-
-    ImageView uploadedPhoto;
-    private String imageDecodableString;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
-
     private static int RESULT_LOAD_IMG = 1;
     private static int RESULT_TAKE_PIC_FROM_CAMERA = 2;
-
+    List<CheckBox> checkBoxeList;
+    ImageView uploadedPhoto;
     CheckBox mapCheckBox;
     CheckBox photoCheckBox;
+    private ListView taskListView;
+    private String username;
+    //    private TaskArrayAdapter taskArrayAdapter;
+    private ParseTaskArrayAdapter parseTaskArrayAdapter;
+    private String imageDecodableString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -238,7 +236,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
             case HISTORY_STRING:
                 Intent intent = new Intent();
                 intent.setClass(this, TaskCalendarActivity.class);
-                intent.putExtra("taskItem", taskItem);
+                intent.putExtra("taskItem", parseTaskItem);
                 startActivity(intent);
                 break;
             case EDIT_STRING:
