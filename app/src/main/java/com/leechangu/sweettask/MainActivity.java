@@ -96,11 +96,12 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 checkBoxeList = new ArrayList<CheckBox>();
                 CheckBox contentCheckBox = (CheckBox)modifyView.findViewById(R.id.contentCheckBox);
                 contentCheckBox.setText(parseTaskItem.getContent());
+                contentCheckBox.setChecked(true);
                 checkBoxeList.add(contentCheckBox);
 
                 //Add checkBox for Map
                 mapCheckBox = (CheckBox) modifyView.findViewById(R.id.mapCheckBox);
-                if (parseTaskItem.getMapInfo() == null) {
+                if (parseTaskItem.getMapInfo() == null || parseTaskItem.getMapInfo().equals("")) {
                     mapCheckBox.setVisibility(View.INVISIBLE);
                 } else {
                     mapCheckBox.setVisibility(View.VISIBLE);
@@ -167,6 +168,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                             Toast.makeText(getApplicationContext(), "Congratulation!", Toast.LENGTH_SHORT).show();
                             parseTaskItem.setIfAllTasksFinished(true);
 //                            TaskDb.update(parseTaskItem);
+                            parseTaskItem.addCompleteDate();
                             ParseTaskItemRepository.updateParseTask(parseTaskItem);
                             updateAlarmList();
                         }
@@ -340,45 +342,46 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 
         try {
             // Selecting a photo by picking from gallery
-            if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK
+            if (requestCode == RESULT_LOAD_IMG
                     && null != data) {
-                // Get the Image from data
-                Uri selectedImage = data.getData();
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                if (resultCode == RESULT_OK) {
+                    // Get the Image from data
+                    Uri selectedImage = data.getData();
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
-                // Get the cursor
-                Cursor cursor = getContentResolver().query(selectedImage,
-                        filePathColumn, null, null, null);
-                // Move to first row
-                cursor.moveToFirst();
+                    // Get the cursor
+                    Cursor cursor = getContentResolver().query(selectedImage,
+                            filePathColumn, null, null, null);
+                    // Move to first row
+                    cursor.moveToFirst();
 
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                imageDecodableString = cursor.getString(columnIndex);
-                cursor.close();
-                // Set the Image in ImageView after decoding the String
-                uploadedPhoto.setImageBitmap(BitmapFactory
-                        .decodeFile(imageDecodableString));
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    imageDecodableString = cursor.getString(columnIndex);
+                    cursor.close();
+                    // Set the Image in ImageView after decoding the String
+                    uploadedPhoto.setImageBitmap(BitmapFactory
+                            .decodeFile(imageDecodableString));
 
-                // Decode the image to byte
-                File imageFile = new File(imageDecodableString);
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(imageFile);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                Bitmap bm = BitmapFactory.decodeStream(fis);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bm.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-                byte[] b = baos.toByteArray();
+                    // Decode the image to byte
+                    File imageFile = new File(imageDecodableString);
+                    FileInputStream fis = null;
+                    try {
+                        fis = new FileInputStream(imageFile);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    Bitmap bm = BitmapFactory.decodeStream(fis);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bm.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                    byte[] b = baos.toByteArray();
 
-                //decode a image-------
-                Bitmap bmp=BitmapFactory.decodeByteArray(b,0,b.length);
-                uploadedPhoto.setImageBitmap(bmp);
-                //---------------------
-                photoCheckBox.setChecked(true);
+                    //decode a image-------
+                    Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+                    uploadedPhoto.setImageBitmap(bmp);
+                    //---------------------
+                    photoCheckBox.setChecked(true);
 
-                // Decode this image to ParseFile
+                    // Decode this image to ParseFile
 //                file = new ParseFile("propic.jpg", b);
 //
 //                Toast.makeText(this, "You set your pro pic successfully!",
@@ -393,16 +396,22 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 //                        }
 //                    }
 //                });
+                } else {
+                    photoCheckBox.setChecked(false);
+                    Toast.makeText(this, "You haven't picked photo",
+                            Toast.LENGTH_SHORT).show();
+                }
 
                 // Setting a propic by camera
-            } else if (requestCode == RESULT_TAKE_PIC_FROM_CAMERA && resultCode == RESULT_OK){
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                uploadedPhoto
-                        .setImageBitmap(photo);
+            } else if (requestCode == RESULT_TAKE_PIC_FROM_CAMERA) {
+                if (resultCode == RESULT_OK) {
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    uploadedPhoto
+                            .setImageBitmap(photo);
 
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                photo.compress(Bitmap.CompressFormat.JPEG, 50, stream);
-                byte[] b = stream.toByteArray();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    photo.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+                    byte[] b = stream.toByteArray();
 
 //                // Decode this image to ParseFile
 //                file = new ParseFile("propic.jpg", b);
@@ -420,12 +429,12 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 //                    }
 //                });
 
-                photoCheckBox.setChecked(true);
-
-            } else {
-                photoCheckBox.setChecked(false);
-                Toast.makeText(this, "You haven't picked photo",
+                    photoCheckBox.setChecked(true);
+                } else {
+                    photoCheckBox.setChecked(false);
+                    Toast.makeText(this, "You haven't picked photo",
                         Toast.LENGTH_SHORT).show();
+                }
             }
         } catch (Exception e){
             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT)

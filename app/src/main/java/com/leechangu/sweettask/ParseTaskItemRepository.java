@@ -1,12 +1,12 @@
 package com.leechangu.sweettask;
 
 
-import com.leechangu.sweettask.settask.TaskPreferenceActivity;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,17 +34,7 @@ public class ParseTaskItemRepository {
                 // ParseTaskItem (because could not cast ParseObject to ParseTaskItem)
                 ParseTaskItem parseTaskItem = new ParseTaskItem();
                 parseTaskItem.setId(parseObject.getObjectId());
-                parseTaskItem.setContent(parseObject.getString("taskContent"));
-                parseTaskItem.setVibrate(parseObject.getBoolean("vibrate"));
-                parseTaskItem.setActive(parseObject.getBoolean("active"));
-                parseTaskItem.setTimeBasis(ParseTaskItem.TimeBasisEnum.valueOf(parseObject.getString("timeBasis")));
-                parseTaskItem.setIsPhotoTask(parseObject.getBoolean("isPhotoTask"));
-                parseTaskItem.setIsPhotoTaskFinished(parseObject.getBoolean("isPhotoTaskFinished"));
-                parseTaskItem.setIsMapTask(parseObject.getBoolean("isMapTask"));
-                parseTaskItem.setIsMapTaskFinished(parseObject.getBoolean("isMapTaskFinished"));
-                parseTaskItem.setMapInfo(parseObject.getString("mapInfo"));
-                parseTaskItem.setAlarmTonePath(parseObject.getString("alarmTonePath"));
-                parseTaskItem.setIfAllTasksFinished(parseObject.getBoolean("ifAllTasksFinished"));
+                fillTaskItem(parseTaskItem, parseObject);
 
                 // Add it to parseTaskItems
                 parseTaskItems.add(parseTaskItem);
@@ -80,58 +70,16 @@ public class ParseTaskItemRepository {
         return parseTaskItems;
     }
 
-
-    // Read Single Task
-    public static boolean readParseTask(final ParseTaskItem parseTaskItem){
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseTaskItem");
-        query.getInBackground(parseTaskItem.getId(), new GetCallback<ParseObject>() {
-            public void done(ParseObject parseObject, ParseException e) {
-                if (e == null) {
-                    // object will be your game score
-                    parseTaskItem.setContent(parseObject.getString("taskContent"));
-                    parseTaskItem.setVibrate(parseObject.getBoolean("vibrate"));
-                    parseTaskItem.setActive(parseObject.getBoolean("active"));
-                    parseTaskItem.setTimeBasis(ParseTaskItem.TimeBasisEnum.valueOf(parseObject.getString("timeBasis")));
-                    parseTaskItem.setIsPhotoTask(parseObject.getBoolean("isPhotoTask"));
-                    parseTaskItem.setIsPhotoTaskFinished(parseObject.getBoolean("isPhotoTaskFinished"));
-                    parseTaskItem.setIsMapTask(parseObject.getBoolean("isMapTask"));
-                    parseTaskItem.setIsMapTaskFinished(parseObject.getBoolean("isMapTaskFinished"));
-                    parseTaskItem.setMapInfo(parseObject.getString("mapInfo"));
-                    parseTaskItem.setAlarmTonePath(parseObject.getString("alarmTonePath"));
-                    parseTaskItem.setIfAllTasksFinished(parseObject.getBoolean("ifAllTasksFinished"));
-
-                } else {
-                    // something went wrong
-                    // Else show the error message on TaskPreferenceActivity
-                    new TaskPreferenceActivity().toastSomething(e.toString());
-                }
-            }
-        });
-
-        return true;
-    }
-
     // Create
     public static boolean createParseTask(final ParseTaskItem parseTaskItem){
 
         ParseUser currentUser = ParseUser.getCurrentUser();
 
-        final ParseObject ParseTaskItemObject = new ParseObject("ParseTaskItem");
-        ParseTaskItemObject.put("belonger", currentUser.getUsername());
-        ParseTaskItemObject.put("taskContent", parseTaskItem.getContent());
-        ParseTaskItemObject.put("vibrate", parseTaskItem.isVibrate());
-        ParseTaskItemObject.put("active", parseTaskItem.isActive());
-        ParseTaskItemObject.put("timeBasis", parseTaskItem.getTimeBasisEnum().toString());
-        ParseTaskItemObject.put("isPhotoTask", parseTaskItem.isPhotoTask());
-        ParseTaskItemObject.put("isPhotoTaskFinished", parseTaskItem.isPhotoTaskFinished());
-        ParseTaskItemObject.put("isMapTask", parseTaskItem.isMapTask());
-        ParseTaskItemObject.put("isMapTaskFinished", parseTaskItem.isMapTaskFinished());
-        ParseTaskItemObject.put("mapInfo", parseTaskItem.getMapInfo());
-        ParseTaskItemObject.put("alarmTonePath", parseTaskItem.getAlarmTonePath());
-        ParseTaskItemObject.put("ifAllTasksFinished", parseTaskItem.ifAllTasksFinished());
+        final ParseObject parseObject = new ParseObject("ParseTaskItem");
+        parseObject.put("belonger", currentUser.getUsername());
+        fillParseObjectWithoutBelonger(parseObject, parseTaskItem);
         try {
-            ParseTaskItemObject.save();
+            parseObject.save();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -147,17 +95,7 @@ public class ParseTaskItemRepository {
             ParseObject parseObject = query.get(parseTaskItem.getId());
             // Update something to Parse Cloud, the belonger name would not change so it's
             // good to not do with belonger here for security reason.
-            parseObject.put("taskContent", parseTaskItem.getContent());
-            parseObject.put("vibrate", parseTaskItem.isVibrate());
-            parseObject.put("active", parseTaskItem.isActive());
-            parseObject.put("timeBasis", parseTaskItem.getTimeBasisEnum().toString());
-            parseObject.put("isPhotoTask", parseTaskItem.isPhotoTask());
-            parseObject.put("isPhotoTaskFinished", parseTaskItem.isPhotoTaskFinished());
-            parseObject.put("isMapTask", parseTaskItem.isMapTask());
-            parseObject.put("isMapTaskFinished", parseTaskItem.isMapTaskFinished());
-            parseObject.put("mapInfo", parseTaskItem.getMapInfo());
-            parseObject.put("alarmTonePath", parseTaskItem.getAlarmTonePath());
-            parseObject.put("ifAllTasksFinished", parseTaskItem.ifAllTasksFinished());
+            fillParseObjectWithoutBelonger(parseObject, parseTaskItem);
             try {
                 parseObject.save();
             } catch (ParseException e1) {
@@ -168,6 +106,43 @@ public class ParseTaskItemRepository {
         }
 
         return true;
+    }
+
+    private static void fillTaskItem(ParseTaskItem parseTaskItem, ParseObject parseObject) {
+        parseTaskItem.setContent(parseObject.getString("taskContent"));
+        parseTaskItem.setVibrate(parseObject.getBoolean("vibrate"));
+        parseTaskItem.setActive(parseObject.getBoolean("active"));
+        parseTaskItem.setTimeBasis(ParseTaskItem.TimeBasisEnum.valueOf(parseObject.getString("timeBasis")));
+        parseTaskItem.setIsPhotoTask(parseObject.getBoolean("isPhotoTask"));
+        parseTaskItem.setIsPhotoTaskFinished(parseObject.getBoolean("isPhotoTaskFinished"));
+        parseTaskItem.setIsMapTask(parseObject.getBoolean("isMapTask"));
+        parseTaskItem.setIsMapTaskFinished(parseObject.getBoolean("isMapTaskFinished"));
+        parseTaskItem.setMapInfo(parseObject.getString("mapInfo"));
+        parseTaskItem.setAlarmTonePath(parseObject.getString("alarmTonePath"));
+        parseTaskItem.setIfAllTasksFinished(parseObject.getBoolean("ifAllTasksFinished"));
+        parseTaskItem.setCompleteDatesFromJSONArray(parseObject.getJSONArray("completeDates"));
+    }
+
+    private static void fillParseObjectWithoutBelonger(ParseObject parseObject, ParseTaskItem parseTaskItem) {
+        parseObject.put("taskContent", parseTaskItem.getContent());
+        parseObject.put("vibrate", parseTaskItem.isVibrate());
+        parseObject.put("active", parseTaskItem.isActive());
+        parseObject.put("timeBasis", parseTaskItem.getTimeBasisEnum().toString());
+        parseObject.put("isPhotoTask", parseTaskItem.isPhotoTask());
+        parseObject.put("isPhotoTaskFinished", parseTaskItem.isPhotoTaskFinished());
+        parseObject.put("isMapTask", parseTaskItem.isMapTask());
+        parseObject.put("isMapTaskFinished", parseTaskItem.isMapTaskFinished());
+        parseObject.put("mapInfo", parseTaskItem.getMapInfo());
+        parseObject.put("alarmTonePath", parseTaskItem.getAlarmTonePath());
+        parseObject.put("ifAllTasksFinished", parseTaskItem.ifAllTasksFinished());
+        parseObject.put("completeDates", list2JSONArray(parseTaskItem.getCompleteDates()));
+    }
+
+    private static JSONArray list2JSONArray(List<Long> list) {
+        JSONArray array = new JSONArray();
+        for (Long each : list)
+            array.put(each);
+        return array;
     }
 
     // Delete

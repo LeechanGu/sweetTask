@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -112,6 +115,17 @@ public class ParseTaskItem implements Serializable {
 
     public void setIfAllTasksFinished(boolean ifAllTasksFinished) {
         this.ifAllTasksFinished = ifAllTasksFinished;
+    }
+
+    public void setCompleteDatesFromJSONArray(JSONArray array) {
+        completeDates.clear();
+        if (array == null) return;
+        try {
+            for (int i = 0; i < array.length(); i++)
+                completeDates.add((long) array.get(i));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getAlarmTonePath() {

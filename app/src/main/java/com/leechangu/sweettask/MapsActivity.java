@@ -84,9 +84,11 @@ public class MapsActivity extends BaseActionBarActivity implements SeekBar.OnSee
         if (!mapInfo.equals(""))
         {
             c = MapCircle.setLatLongRadius(c,mapInfo);
+            homeMarker = addMarker(mMap, MapCircle.getLatLngFromString(mapInfo));
+        } else {
+            homeMarker = addMarker(mMap, HOME);
         }
         mapCircle = new MapCircle(c);
-        homeMarker = addMarker(mMap, MapCircle.getLatLngFromString(mapInfo));
         distanceTextView.setText(radiusSeekBar.getProgress() + " m");
 
         zoomBackHome();
