@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-//import com.leechangu.sweettask.db.TaskDb;
 import com.leechangu.sweettask.settask.TaskPreferenceActivity;
 import com.parse.ParseUser;
 
