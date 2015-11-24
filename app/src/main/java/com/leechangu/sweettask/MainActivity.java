@@ -428,9 +428,5 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 
     }
 
-    // Toast at this Context
-    public void toastSomething(String message){
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
-    }
 
 }
