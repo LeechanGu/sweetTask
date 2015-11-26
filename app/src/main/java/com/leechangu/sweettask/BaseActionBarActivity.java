@@ -6,8 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.leechangu.sweettask.settask.TaskPreferenceActivity;
-
 // this should be inherited by other activities that requires action bar
 public abstract class BaseActionBarActivity extends AppCompatActivity {
 
@@ -28,11 +26,6 @@ public abstract class BaseActionBarActivity extends AppCompatActivity {
         Intent intent = null;
         switch (item.getItemId())
         {
-            case R.id.menu_item_new:
-                intent = new Intent();
-                intent.setClass(this, TaskPreferenceActivity.class);
-                startActivity(intent);
-                break;
             case R.id.menu_item_settings:
                  intent = new Intent();
                 intent.setClass(this, SettingActivity.class);

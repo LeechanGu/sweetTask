@@ -9,18 +9,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.leechangu.sweettask.MainActivity;
 import com.leechangu.sweettask.R;
+import com.leechangu.sweettask.UserMng;
 import com.leechangu.sweettask.UtilRepository;
 import com.leechangu.sweettask.db.AccountDbAdapter;
 import com.parse.LogInCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 public class LogInActivity extends Activity {
@@ -138,6 +136,9 @@ public class LogInActivity extends Activity {
             public void done(ParseUser user, ParseException e) {
                 if (user != null) {
                     // Hooray! The user is logged in.
+                    UserMng userMng = UserMng.getInstance();
+                    userMng.setMyUsername(thisUsername);
+
                     saveLoggedInUId(thisUsername, thePassword.getText().toString());
                     Intent i = new Intent(getApplicationContext(), MainActivity.class);
                     progressDialog.dismiss();

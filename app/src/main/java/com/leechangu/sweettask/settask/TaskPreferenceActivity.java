@@ -1,6 +1,7 @@
 package com.leechangu.sweettask.settask;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -28,19 +29,32 @@ import com.leechangu.sweettask.MapsActivity;
 import com.leechangu.sweettask.ParseTaskItem;
 import com.leechangu.sweettask.ParseTaskItemRepository;
 import com.leechangu.sweettask.R;
-//import com.leechangu.sweettask.TaskItem;
-//import com.leechangu.sweettask.db.TaskDb;
+import com.leechangu.sweettask.ToastMng;
 import com.leechangu.sweettask.settask.TaskPreference.Key;
 
-public class TaskPreferenceActivity extends BaseActionBarActivity {
+//import com.leechangu.sweettask.TaskItem;
+//import com.leechangu.sweettask.db.TaskDb;
 
+public class TaskPreferenceActivity extends BaseActionBarActivity {
+    public final static int REQUESTCODE_MAP = 1;
+    private final static String USER_NAME = "username";
+    private final static String TASK_ITEM = "taskItem";
+    private String username;
 //    private TaskItem taskItem;
     private ParseTaskItem parseTaskItem;
     private TaskPreferenceListAdapter listAdapter;
     private ListView listView;
     private MediaPlayer mediaPlayer;
     private CountDownTimer alarmToneTimer;
-    public final static int REQUESTCODE_MAP = 1;
+
+    public static void gotoTaskPreferenceActivity(Context context, String username, ParseTaskItem parseTaskItem) {
+        Intent intent = new Intent();
+        intent.setClass(context, TaskPreferenceActivity.class);
+        if (parseTaskItem != null)
+            intent.putExtra(TASK_ITEM, parseTaskItem);
+        intent.putExtra(USER_NAME, username);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +64,18 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         Bundle bundle = getIntent().getExtras();
-        if (bundle != null && bundle.containsKey("taskItem")) {
-            setTaskItem((ParseTaskItem) bundle.getSerializable("taskItem"));
+        if (bundle != null && bundle.containsKey(USER_NAME))
+            username = bundle.getString(USER_NAME);
+        else
+            ToastMng.toastSomething(this, "username not exist");
+
+        if (bundle != null && bundle.containsKey(TASK_ITEM)) {
+            setTaskItem((ParseTaskItem) bundle.getSerializable(TASK_ITEM));
         } else {
             setTaskItem(new ParseTaskItem());
         }
+
+        // what's this?
         if (bundle != null && bundle.containsKey("adapter")) {
             setListAdapter((TaskPreferenceListAdapter) bundle.getSerializable("adapter"));
         } else {
@@ -275,15 +296,11 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_save:
-//                TaskDb.init(getApplicationContext());
                 if (getParseTaskItem().getId()==null) {
-//                    TaskDb.create(getTaskItem());
-                    ParseTaskItemRepository.createParseTask(getParseTaskItem());
+                    ParseTaskItemRepository.createParseTask(getParseTaskItem(), username);
                 } else {
-//                    TaskDb.update(getTaskItem());
                     ParseTaskItemRepository.updateParseTask(getParseTaskItem());
                 }
-                //callMathAlarmScheduleService();
                 Toast.makeText(TaskPreferenceActivity.this, getParseTaskItem().getTimeUntilNextAlarmMessage(), Toast.LENGTH_LONG).show();
                 finish();
                 break;
@@ -292,18 +309,9 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
                 dialog.setTitle("Delete");
                 dialog.setMessage("Delete this alarm?");
                 dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-//                TaskDb.init(getApplicationContext());
-                        if (getParseTaskItem().getId()==null) {
-//                    TaskDb.create(getTaskItem());
-                            ParseTaskItemRepository.createParseTask(getParseTaskItem());
-                        } else {
-//                    TaskDb.update(getTaskItem());
-                            ParseTaskItemRepository.deleteParseTask(getParseTaskItem());
-                        }
+                        ParseTaskItemRepository.deleteParseTask(getParseTaskItem());
                         finish();
                     }
                 });
@@ -323,13 +331,13 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
         this.parseTaskItem = taskItem;
     }
 
+    public ListAdapter getListAdapter() {
+        return listAdapter;
+    }
+
     public void setListAdapter(TaskPreferenceListAdapter listAdapter) {
         this.listAdapter = listAdapter;
         getListView().setAdapter(listAdapter);
-    }
-
-    public ListAdapter getListAdapter() {
-        return listAdapter;
     }
 
     private ListView getListView() {
@@ -346,8 +354,4 @@ public class TaskPreferenceActivity extends BaseActionBarActivity {
     }
 
 
-    // Toast at this Context
-    public void toastSomething(String message){
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
-    }
 }

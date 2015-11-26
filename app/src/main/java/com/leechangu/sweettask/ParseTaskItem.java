@@ -17,10 +17,9 @@ import java.util.List;
 /**
  * Created by CharlesGao on 15-11-17.
  *
- * Function: This is an entity class that will replace {@link TaskItem}
+ *
  */
 public class ParseTaskItem implements Serializable {
-
 
     private static final long serialVersionUID = 8699489847426803789L;
     private String id = null; // This Id is the ObjectId from Parse
@@ -30,7 +29,6 @@ public class ParseTaskItem implements Serializable {
     private boolean vibrate = true;
     private boolean active = true;
     private boolean isPhotoTask = false; // The new Task is not a photo task by default
-    private boolean isMapTask = false;
     private boolean ifAllTasksFinished = false;
     private String mapInfo = "";
     private List<Long> completeDates = new LinkedList<Long>();
@@ -61,12 +59,9 @@ public class ParseTaskItem implements Serializable {
 
 
     public boolean isMapTask() {
-        return isMapTask;
+        return mapInfo.length() != 0;
     }
 
-    public void setIsMapTask(boolean isMapTask) {
-        this.isMapTask = isMapTask;
-    }
 
 
     public boolean isPhotoTaskFinished() {

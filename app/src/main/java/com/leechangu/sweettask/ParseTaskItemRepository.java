@@ -71,12 +71,12 @@ public class ParseTaskItemRepository {
     }
 
     // Create
-    public static boolean createParseTask(final ParseTaskItem parseTaskItem){
+    public static boolean createParseTask(final ParseTaskItem parseTaskItem, String username) {
 
         ParseUser currentUser = ParseUser.getCurrentUser();
 
         final ParseObject parseObject = new ParseObject("ParseTaskItem");
-        parseObject.put("belonger", currentUser.getUsername());
+        parseObject.put("belonger", username);
         fillParseObjectWithoutBelonger(parseObject, parseTaskItem);
         try {
             parseObject.save();
@@ -115,7 +115,6 @@ public class ParseTaskItemRepository {
         parseTaskItem.setTimeBasis(ParseTaskItem.TimeBasisEnum.valueOf(parseObject.getString("timeBasis")));
         parseTaskItem.setIsPhotoTask(parseObject.getBoolean("isPhotoTask"));
         parseTaskItem.setIsPhotoTaskFinished(parseObject.getBoolean("isPhotoTaskFinished"));
-        parseTaskItem.setIsMapTask(parseObject.getBoolean("isMapTask"));
         parseTaskItem.setIsMapTaskFinished(parseObject.getBoolean("isMapTaskFinished"));
         parseTaskItem.setMapInfo(parseObject.getString("mapInfo"));
         parseTaskItem.setAlarmTonePath(parseObject.getString("alarmTonePath"));
@@ -130,7 +129,6 @@ public class ParseTaskItemRepository {
         parseObject.put("timeBasis", parseTaskItem.getTimeBasisEnum().toString());
         parseObject.put("isPhotoTask", parseTaskItem.isPhotoTask());
         parseObject.put("isPhotoTaskFinished", parseTaskItem.isPhotoTaskFinished());
-        parseObject.put("isMapTask", parseTaskItem.isMapTask());
         parseObject.put("isMapTaskFinished", parseTaskItem.isMapTaskFinished());
         parseObject.put("mapInfo", parseTaskItem.getMapInfo());
         parseObject.put("alarmTonePath", parseTaskItem.getAlarmTonePath());

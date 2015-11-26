@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -17,12 +18,14 @@ import java.util.List;
 /**
  * Created by CharlesGao on 15-11-17.
  *
- * Function: This class is a Adapter class. It will Replace{@link TaskArrayAdapter};
+ *
  */
 public class ParseTaskArrayAdapter extends ArrayAdapter<ParseTaskItem>{
 
-    private MainActivity mainActivity;
     List<ParseTaskItem> parseTaskItems;
+    ImageView mapTaskIcon;
+    ImageView cameraTaskIcon;
+    private MainActivity mainActivity;
 
     public ParseTaskArrayAdapter(Context context, int resource, List<ParseTaskItem> objects) {
         super(context, resource, objects);
@@ -48,12 +51,23 @@ public class ParseTaskArrayAdapter extends ArrayAdapter<ParseTaskItem>{
 
         TextView timeBasisTextView = (TextView)customView.findViewById(R.id.timeBasisTextView);
         String timeBasisString = parseTaskItem.getTimeBasisEnum().toString();
-        timeBasisTextView.setText(timeBasisString+(parseTaskItem.ifAllTasksFinished()?"":" ( not finished )"));
+        timeBasisTextView.setText(timeBasisString + (parseTaskItem.ifAllTasksFinished() ? "" : " ( not finished )"));
 
         CheckBox activeCheckBox = (CheckBox) customView.findViewById(R.id.activeCheckBox);
         activeCheckBox.setChecked(parseTaskItem.isActive());
         activeCheckBox.setTag(position);
         activeCheckBox.setOnClickListener(mainActivity);
+
+        mapTaskIcon = (ImageView) customView.findViewById(R.id.mapTaskIcon);
+        if (parseTaskItem.isMapTask())
+            mapTaskIcon.setVisibility(View.VISIBLE);
+        else
+            mapTaskIcon.setVisibility(View.GONE);
+        cameraTaskIcon = (ImageView) customView.findViewById(R.id.cameraTaskIcon);
+        if (parseTaskItem.isPhotoTask())
+            cameraTaskIcon.setVisibility(View.VISIBLE);
+        else
+            cameraTaskIcon.setVisibility(View.GONE);
 
         ProgressBar progressBar = (ProgressBar)customView.findViewById(R.id.progressBar);
         TextView timeLeftTextView = (TextView)customView.findViewById(R.id.timeLeftTextView);

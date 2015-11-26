@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -53,27 +54,44 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     ImageView uploadedPhoto;
     CheckBox mapCheckBox;
     CheckBox photoCheckBox;
+    Menu optionMenu;
+    UserMng userMng = UserMng.getInstance();
     private ListView taskListView;
-    private String username;
+    private String displayedUser;
     //    private TaskArrayAdapter taskArrayAdapter;
     private ParseTaskArrayAdapter parseTaskArrayAdapter;
     private String imageDecodableString;
+    private Button partnerScheduleButton;
+    private Button myScheduleButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        username = currentUser.getUsername();
-        final List<ParseTaskItem> parseTaskItems =
-                ParseTaskItemRepository.getAllParseTasksFromParseByUserName(username);
+        displayedUser = UserMng.getInstance().getMyUsername();
 
-//        TaskDb.init(MainActivity.this);
+        final List<ParseTaskItem> parseTaskItems =
+                ParseTaskItemRepository.getAllParseTasksFromParseByUserName(displayedUser);
+        partnerScheduleButton = (Button) findViewById(R.id.partnerScheduleButton);
+        partnerScheduleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                partnerScheduleSetting();
+            }
+        });
+        myScheduleButton = (Button) findViewById(R.id.myScheduleButton);
+        myScheduleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayedUser = ParseUser.getCurrentUser().getUsername();
+                myScheduleSetting();
+            }
+        });
+
         taskListView = (ListView)findViewById(R.id.taskListView);
-//        final List<TaskItem> taskItems = TaskDb.getAll();
-//        taskArrayAdapter = new TaskArrayAdapter(this,R.layout.custom_task_row, taskItems);
         parseTaskArrayAdapter = new ParseTaskArrayAdapter(this,R.layout.custom_task_row, parseTaskItems);
+        updateTaskList(displayedUser);
         taskListView.setAdapter(parseTaskArrayAdapter);
         taskListView.setLongClickable(true);
         taskListView.setClickable(true);
@@ -167,10 +185,9 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                         if (allChecked) {
                             Toast.makeText(getApplicationContext(), "Congratulation!", Toast.LENGTH_SHORT).show();
                             parseTaskItem.setIfAllTasksFinished(true);
-//                            TaskDb.update(parseTaskItem);
                             parseTaskItem.addCompleteDate();
                             ParseTaskItemRepository.updateParseTask(parseTaskItem);
-                            updateAlarmList();
+                            updateTaskList(displayedUser);
                         }
                         else
                         {
@@ -181,7 +198,6 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 alert.setNegativeButton("Not yet", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         parseTaskItem.setIfAllTasksFinished(false);
-//                        TaskDb.update(taskItem);
                         ParseTaskItemRepository.updateParseTask(parseTaskItem);
                         parseTaskArrayAdapter.notifyDataSetChanged();
                     }
@@ -192,7 +208,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
         });
 
         // display tasks in listView
-        updateAlarmList();
+        updateTaskList(displayedUser);
         registerForContextMenu(taskListView);
     }
 
@@ -214,6 +230,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        optionMenu = menu;
         boolean result = super.onCreateOptionsMenu(menu);
         menu.findItem(R.id.menu_item_new).setVisible(true);
         menu.findItem(R.id.menu_item_delete).setVisible(false);
@@ -221,13 +238,11 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
         return result;
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, v.getId(), 0, HISTORY_STRING);
-        menu.add(0, v.getId(), 0, EDIT_STRING);
-        menu.add(0, v.getId(), 0, DELETE_STRING);
+    private void setMenuOptionNewVisible(boolean visible) {
+        if (optionMenu != null)
+            optionMenu.findItem(R.id.menu_item_new).setVisible(visible);
     }
+
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -242,44 +257,36 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 startActivity(intent);
                 break;
             case EDIT_STRING:
-                intent = new Intent();
-                intent.setClass(this, TaskPreferenceActivity.class);
-                intent.putExtra("taskItem",parseTaskItem);
-                startActivity(intent);
+                TaskPreferenceActivity.gotoTaskPreferenceActivity(this, displayedUser, parseTaskItem);
                 break;
             case DELETE_STRING:
-//                TaskDb.deleteEntry(taskItem);
                 ParseTaskItemRepository.deleteParseTask(parseTaskItem);
                 break;
         }
-        updateAlarmList();
+        updateTaskList(displayedUser);
         return super.onContextItemSelected(item);
     }
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        updateAlarmList();
+        updateTaskList(displayedUser);
     }
 
     @Override
     protected void onPause() {
-        // setListAdapter(null);
-//        TaskDb.deactivate();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        updateAlarmList();
+        updateTaskList(displayedUser);
     }
 
-    public void updateAlarmList(){
-//        TaskDb.init(MainActivity.this);
-//        final List<TaskItem> taskItems = TaskDb.getAll();
+    public void updateTaskList(String userName) {
         final List<ParseTaskItem> parseTaskItems =
-                ParseTaskItemRepository.getAllParseTasksFromParseByUserName(username);
+                ParseTaskItemRepository.getAllParseTasksFromParseByUserName(userName);
         parseTaskArrayAdapter.setParseTaskItems(parseTaskItems);
         runOnUiThread(new Runnable() {
             public void run() {
@@ -288,9 +295,6 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
         });
     }
 
-//    public static void notifyDataSetChangedFromOther(){
-//        parseTaskArrayAdapter.notifyDataSetChanged();
-//    }
 
 
     @Override
@@ -299,9 +303,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
             CheckBox checkBox = (CheckBox) v;
             ParseTaskItem parseTaskItem = (ParseTaskItem) parseTaskArrayAdapter.getItem((Integer) checkBox.getTag());
             parseTaskItem.setActive(checkBox.isChecked());
-//            TaskDb.update(taskItem);
             ParseTaskItemRepository.updateParseTask(parseTaskItem);
-            // AlarmActivity.this.callMathAlarmScheduleService();
             callScheduleService();
             if (checkBox.isChecked()) {
                 Toast.makeText(MainActivity.this, parseTaskItem.getTimeUntilNextAlarmMessage(), Toast.LENGTH_LONG).show();
@@ -318,7 +320,6 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //Toast.makeText(getApplicationContext(), "onActivityResult,"+requestCode+","+resultCode, Toast.LENGTH_SHORT).show();
 
         // For permission (Only when API 23+)
         int permission = ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -441,12 +442,56 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                     .show();
             Log.d("TAG", e.toString());
         }
-
     }
 
-    // Toast at this Context
-    public void toastSomething(String message){
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_new:
+                TaskPreferenceActivity.gotoTaskPreferenceActivity(this, displayedUser, null);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
+    private void myScheduleSetting() {
+        displayedUser = ParseUser.getCurrentUser().getUsername();
+        updateTaskList(displayedUser);
+        myScheduleButton.setPressed(false);
+        partnerScheduleButton.setPressed(true);
+        taskListView.setClickable(true);
+        setMenuOptionNewVisible(false);
+    }
+
+    private void partnerScheduleSetting() {
+        displayedUser = userMng.getPartnerUsername();
+        updateTaskList(displayedUser);
+        myScheduleButton.setPressed(true);
+        partnerScheduleButton.setPressed(false);
+        taskListView.setClickable(false);
+        setMenuOptionNewVisible(true);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (displayedUser.equals(userMng.getMyUsername())) {
+            addContextMenuForMe(menu, v);
+        }
+        if (displayedUser.equals(userMng.getPartnerUsername())) {
+            addContextMenuForPartner(menu, v);
+        }
+    }
+
+    private void addContextMenuForMe(ContextMenu menu, View view) {
+        menu.clear();
+        menu.add(0, view.getId(), 0, HISTORY_STRING);
+    }
+
+    private void addContextMenuForPartner(ContextMenu menu, View view) {
+        menu.clear();
+        menu.add(0, view.getId(), 0, HISTORY_STRING);
+        menu.add(0, view.getId(), 0, EDIT_STRING);
+        menu.add(0, view.getId(), 0, DELETE_STRING);
+    }
 }
