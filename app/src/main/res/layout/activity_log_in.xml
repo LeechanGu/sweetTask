@@ -53,9 +53,11 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical|center_horizontal"
         android:text="Log In"
+        android:background="@color/Main_Theme"
         android:id="@+id/Login"
         android:clickable="true"
-        android:layout_width="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="300dp"
         android:layout_margin="10dp">
     </Button>
 
@@ -64,8 +66,10 @@
         android:gravity="center_vertical|center_horizontal"
         android:text="Register"
         android:id="@+id/Register"
+        android:background="@color/Main_Theme"
         android:clickable="true"
-        android:layout_width="fill_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="300dp"
         android:layout_margin="10dp">
     </Button>
 

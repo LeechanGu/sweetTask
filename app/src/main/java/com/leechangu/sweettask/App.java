@@ -3,6 +3,7 @@ package com.leechangu.sweettask;
 import android.app.Application;
 
 import com.parse.Parse;
+import com.parse.ParseInstallation;
 
 /**
  * Created by CharlesGao on 15-11-16.
@@ -25,6 +26,6 @@ public class App extends Application {
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "RkIHvpR9hEdejBizCivkmywOflupRH49ozgFHROt", "ZqTOMc3F7JucJzOzJc0rt3st4Iffy2ij6njXc0QX");
-
+        ParseInstallation.getCurrentInstallation().saveInBackground();
     }
 }

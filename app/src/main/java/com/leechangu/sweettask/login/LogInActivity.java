@@ -12,7 +12,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.leechangu.sweettask.CancellationActivity;
+import com.leechangu.sweettask.InvitationActivity;
 import com.leechangu.sweettask.MainActivity;
+import com.leechangu.sweettask.ParsePushNotificationBroadcast;
 import com.leechangu.sweettask.R;
 import com.leechangu.sweettask.UserMng;
 import com.leechangu.sweettask.UtilRepository;
@@ -120,7 +123,7 @@ public class LogInActivity extends Activity {
     private void LogMeIn(View v) {
         // ProgressDialog
         final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Waiting for server...");
+        progressDialog.setMessage(getResources().getString(R.string.waiting_for_the_server));
         progressDialog.show();
 
 
@@ -139,8 +142,18 @@ public class LogInActivity extends Activity {
                     UserMng userMng = UserMng.getInstance();
                     userMng.setMyUsername(thisUsername);
 
+                    Intent i;
                     saveLoggedInUId(thisUsername, thePassword.getText().toString());
-                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+//                    if (ParsePushNotificationBroadcast.flag_If_Go_To_Invitation_Activity_Automatically==1){
+//                        i = new Intent(getApplicationContext(), InvitationActivity.class);
+//                        ParsePushNotificationBroadcast.flag_If_Go_To_Invitation_Activity_Automatically=0;
+//                    } else if (ParsePushNotificationBroadcast.flag_If_Go_To_Cancellation_Activity_Automatically==1){
+//                        i = new Intent(getApplicationContext(), CancellationActivity.class);
+//                        ParsePushNotificationBroadcast.flag_If_Go_To_Cancellation_Activity_Automatically=0;
+//                    } else {
+                        i = new Intent(getApplicationContext(), MainActivity.class);
+//                    }
+
                     progressDialog.dismiss();
                     startActivity(i);
                 } else {

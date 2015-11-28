@@ -127,6 +127,7 @@ public class RegisterActivity extends Activity {
         user.setPassword(password);
         user.setEmail(email);
 
+
 //        // other fields can be set just like with ParseObject
 //        user.put("phone", "650-253-0000");
 

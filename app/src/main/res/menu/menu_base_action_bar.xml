@@ -21,7 +21,7 @@
     </item>
 
     <item android:id="@+id/menu_item_settings"
-        android:title="Setting"
+        android:title="Binding"
         android:orderInCategory="100"
         app:showAsAction="never" />
 </menu>
