@@ -46,6 +46,7 @@ public class ParseNotificationRepository {
 //        String json = new ""
 //        JSONObject jsonObject = new JSONObject()
 //        push.setData();
+        //
         push.setQuery(pushQuery); // Set our Installation query
         push.setMessage("Binding Invitation from " + ParseUser.getCurrentUser().getUsername());
         push.sendInBackground(new SendCallback() {
