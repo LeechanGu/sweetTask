@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_find_a_partner"
+        android:layout_height="200dp"
+        android:layout_width="400dp"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="100dp"
+        android:textColor="@color/Main_Theme"
+        android:text="@string/find_a_partner"
+        android:textSize="@dimen/characters_normal"
+        android:textStyle="bold"
+        />
+
+    <EditText
+        android:layout_below="@id/tv_find_a_partner"
+        android:id="@+id/et_enter_name_of_your_partner"
+        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/enter_partner_name_that_you_want_to_bind"
+        />
+
+
+    <Button
+        android:id="@+id/bt_find_partner"
+        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_marginTop="100dp"
+        android:text="@string/bt_find_partner"
+        android:background="@color/Main_Theme"
+        android:textSize="@dimen/characters_small"
+        android:layout_below="@+id/et_enter_name_of_your_partner"
+        android:layout_centerHorizontal="true"/>
+
+
+</RelativeLayout>

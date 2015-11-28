@@ -42,7 +42,7 @@ public class TaskNotificationBroadcastReceiver extends BroadcastReceiver {
         String longText = "It will be due for task - "+val +" in 10 mins";
         Notification noti =
                 new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle("From SweeTask")
                         .setContentText(longText)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(longText))

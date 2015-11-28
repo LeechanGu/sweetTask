@@ -89,6 +89,10 @@ public class ParseTaskArrayAdapter extends ArrayAdapter<ParseTaskItem>{
             timeLeftTextView.setText("Finished");
         }
 
+        if((position+1)%2 ==1){
+            customView.setBackgroundColor(customView.getResources().getColor(R.color.Light_Main_Theme));
+        }
+
         return customView;
     }
 

@@ -2,12 +2,15 @@ package com.leechangu.sweettask;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -39,6 +42,8 @@ import java.util.List;
 //import com.leechangu.sweettask.db.TaskDb;
 
 public class MainActivity extends BaseActionBarActivity implements CheckBox.OnClickListener{
+
+    Context context;
     public final static int REQUESTCODE_LOCATION = 2;
     private final static String EDIT_STRING = "Edit";
     private final static String DELETE_STRING = "Delete";
@@ -185,6 +190,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                         if (allChecked) {
                             Toast.makeText(getApplicationContext(), "Congratulation!", Toast.LENGTH_SHORT).show();
                             parseTaskItem.setIfAllTasksFinished(true);
+//                            TaskDb.update(parseTaskItem);
                             parseTaskItem.addCompleteDate();
                             ParseTaskItemRepository.updateParseTask(parseTaskItem);
                             updateTaskList(displayedUser);
@@ -462,6 +468,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
         taskListView.setClickable(true);
         setMenuOptionNewVisible(false);
     }
+
 
     private void partnerScheduleSetting() {
         displayedUser = userMng.getPartnerUsername();
