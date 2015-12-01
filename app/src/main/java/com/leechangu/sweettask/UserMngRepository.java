@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by CharlesGao on 15-11-25.
  *
- * Function: This is a class that manage the user from parse cloud
+ * Function: This is a class that manage the user from parse cloud.
  */
 public class UserMngRepository {
 
@@ -159,8 +159,13 @@ public class UserMngRepository {
         parseQuery.whereEqualTo("objectId", Id);
         try {
             List<ParseUser> parseUsers = parseQuery.find();
-            ParseUser thisUser = parseUsers.get(0);
-            thisUserUsername = thisUser.getUsername();
+            if(parseUsers.size()==0) {
+                thisUserUsername = "";
+            }else{
+                ParseUser thisUser = parseUsers.get(0);
+                thisUserUsername = thisUser.getUsername();
+            }
+
         } catch (ParseException e) {
             e.printStackTrace();
         }

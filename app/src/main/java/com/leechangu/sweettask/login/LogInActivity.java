@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -18,10 +19,12 @@ import com.leechangu.sweettask.MainActivity;
 import com.leechangu.sweettask.ParsePushNotificationBroadcast;
 import com.leechangu.sweettask.R;
 import com.leechangu.sweettask.UserMng;
+import com.leechangu.sweettask.UserMngRepository;
 import com.leechangu.sweettask.UtilRepository;
 import com.leechangu.sweettask.db.AccountDbAdapter;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 
 public class LogInActivity extends Activity {
@@ -130,6 +133,18 @@ public class LogInActivity extends Activity {
         //Get the username and password
         final String thisUsername = theUsername.getText().toString();
         String thisPassword = thePassword.getText().toString();
+
+
+        // Associate the device with a device once a user login
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("pushToId", UserMngRepository.convertUsernameToId(thisUsername)); // Should not be objectId!
+        // which already have in Installation table
+        try {
+            installation.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.d("push", e.toString());
+        }
 
         //Assign the hash to the password
         thisPassword = UtilRepository.md5(thisPassword);

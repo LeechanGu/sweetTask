@@ -136,7 +136,7 @@ public class RegisterActivity extends Activity {
                 if (e == null) {
                     // Hooray! Let them use the app now.
                     saveLoggedInUId(username, newPassword.getText().toString());
-                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent i = new Intent(getApplicationContext(), LogInActivity.class);
                     progressDialog.dismiss();
                     startActivity(i);
                 } else {

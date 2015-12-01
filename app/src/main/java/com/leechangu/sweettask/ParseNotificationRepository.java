@@ -25,16 +25,19 @@ public class ParseNotificationRepository {
 
         ParseInstallation.getCurrentInstallation().saveInBackground();
 
-        // Associate the device with a user
-        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        installation.put("pushToId",Id); // Should not be objectId!
-        // which already have in Installation table
-        try {
-            installation.save();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            Log.d("push", e.toString());
-        }
+        /**
+         *  Code below moved to {@link com.leechangu.sweettask.login.LogInActivity}
+         */
+//        // Associate the device with a device once a user login
+//        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+//        installation.put("pushToId", Id); // Should not be objectId!
+//        // which already have in Installation table
+//        try {
+//            installation.save();
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//            Log.d("push", e.toString());
+//        }
 
         ParseQuery pushQuery = ParseInstallation.getQuery();
         pushQuery.whereEqualTo("pushToId", Id);
