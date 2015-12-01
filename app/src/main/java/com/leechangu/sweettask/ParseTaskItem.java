@@ -56,7 +56,14 @@ public class ParseTaskItem implements Serializable {
 //        this.belonger = belonger;
 //    }
 
-
+    public String toString()
+    {
+        StringBuilder st = new StringBuilder();
+        st.append("Name: "+getContent()+"\n");
+        st.append("Period: "+getTimeBasisEnum()+"\n");
+        st.append("Complete: "+getCompleteDates().size()+" times");
+        return st.toString();
+    }
 
     public boolean isMapTask() {
         return mapInfo.length() != 0;

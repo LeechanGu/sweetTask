@@ -85,7 +85,7 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" >
+            android:label="Select a location" >
         </activity>
         <activity
             android:name=".login.LogInActivity"
@@ -110,11 +110,11 @@
         </activity>
         <activity
             android:name=".settask.TaskPreferenceActivity"
-            android:label="@string/title_activity_set_task" >
+            android:label="Set a task" >
         </activity>
         <activity
             android:name=".MyLocationActivity"
-            android:label="@string/title_activity_my_location" >
+            android:label="My Location" >
         </activity>
 
         <receiver
@@ -136,9 +136,7 @@
         <!--<activity android:name=".HerTaskActivity"></activity>-->
         <activity
             android:name=".TaskCalendarActivity"
-            android:label="@string/title_activity_task_calendar"
-            android:theme="@style/AppTheme.NoActionBar">
-
+            android:label="Calendar">
         </activity>
 
         <!--This is for Parse Notification-->

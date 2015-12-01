@@ -9,17 +9,17 @@
 <ListView
     android:id="@+id/taskListView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
     android:layout_above="@+id/myScheduleButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
     android:layout_alignParentTop="true"
-    android:layout_weight="20"
+    android:layout_weight="10"
     android:theme="@style/Widget.AppCompat.ListView" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1">
 
         <Button

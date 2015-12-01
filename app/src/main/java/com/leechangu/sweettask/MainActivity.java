@@ -151,6 +151,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 CheckBox contentCheckBox = (CheckBox)modifyView.findViewById(R.id.contentCheckBox);
                 contentCheckBox.setText(parseTaskItem.getContent());
                 contentCheckBox.setChecked(true);
+                contentCheckBox.setEnabled(false);
                 checkBoxeList.add(contentCheckBox);
 
                 //Add checkBox for Map
@@ -209,7 +210,19 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                         }
                     });
                 }
-
+                if (!displayedUser.equals(UserMng.getInstance().getMyUsername()))
+                {
+                    contentCheckBox.setEnabled(false);
+                    mapCheckBox.setEnabled(false);
+                    photoCheckBox.setEnabled(false);
+                    alert.show();
+                    return;
+                }else
+                {
+                    contentCheckBox.setEnabled(true);
+                    mapCheckBox.setEnabled(true);
+                    photoCheckBox.setEnabled(true);
+                }
                 alert.setPositiveButton("Finished", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
@@ -529,11 +542,20 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 
     private void myScheduleSettingWithoutUpdate() {
         displayedUser = ParseUser.getCurrentUser().getUsername();
-        myScheduleButton.setPressed(false);
-        partnerScheduleButton.setPressed(true);
+        updateNameButton();
         taskListView.setClickable(true);
         setMenuOptionNewVisible(false);
         hightlightMyButton();
+    }
+
+    private void updateNameButton()
+    {
+        myScheduleButton.setText("Me:"+UserMng.getInstance().getMyUsername());
+        String partnerName = UserMng.getInstance().getPartnerUsername();
+        if (partnerName==null  || partnerName.isEmpty())
+            partnerScheduleButton.setText("Find a partner");
+        else
+            partnerScheduleButton.setText("Partner:"+partnerName);
     }
 
 
@@ -548,8 +570,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
         if (UserMngRepository.isMeAndMyPartnerBindingSuccessfullly(userMng.getPartnerUsername())) {
             displayedUser = userMng.getPartnerUsername();
             updateTaskList(displayedUser);
-            myScheduleButton.setPressed(true);
-            partnerScheduleButton.setPressed(false);
+            updateNameButton();
             taskListView.setClickable(false);
             setMenuOptionNewVisible(true);
             hightlightPartnerButton();
