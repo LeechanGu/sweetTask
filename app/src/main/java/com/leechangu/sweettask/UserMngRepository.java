@@ -16,6 +16,7 @@ public class UserMngRepository {
 
     public static String getPartnerUsername(){
         ParseUser parseUser = ParseUser.getCurrentUser();
+        if (parseUser.get("partnerId")==null || parseUser.get("partnerId").equals("")) return "";
         String partnerId = parseUser.get("partnerId").toString();
         return convertIdToUsername(partnerId);
     }
@@ -172,4 +173,33 @@ public class UserMngRepository {
         return thisUserUsername;
     }
 
+    public static boolean isMeAndMyPartnerBindingSuccessfullly(String partnerUsername){
+
+        // checking my side
+        ParseUser parseUser = ParseUser.getCurrentUser();
+        String myPartnerId = parseUser.get("partnerId").toString();
+        String myId = parseUser.getObjectId();
+
+
+        String partnerId = UserMngRepository.convertUsernameToId(partnerUsername);
+        ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
+        parseQuery.whereEqualTo("objectId", partnerId);
+
+
+        try {
+            List<ParseUser> parseUsers = parseQuery.find();
+            ParseUser thisUser = parseUsers.get(0);
+            if(thisUser.get("partnerId")==null){
+                // ==null, which means does not have a partner
+                return false;
+            }else{
+                if(thisUser.get("partnerId").toString().equals(myId) && myPartnerId.equals(partnerId))
+                return true;
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

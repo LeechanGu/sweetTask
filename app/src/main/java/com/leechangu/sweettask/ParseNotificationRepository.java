@@ -76,16 +76,16 @@ public class ParseNotificationRepository {
 
         ParseInstallation.getCurrentInstallation().saveInBackground();
 
-        // Associate the device with a user
-        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        installation.put("pushToId",Id); // Should not be objectId!
-        // which already have in Installation table
-        try {
-            installation.save();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            Log.d("push", e.toString());
-        }
+//        // Associate the device with a user
+//        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+//        installation.put("pushToId",Id); // Should not be objectId!
+//        // which already have in Installation table
+//        try {
+//            installation.save();
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//            Log.d("push", e.toString());
+//        }
 
         ParseQuery pushQuery = ParseInstallation.getQuery();
         pushQuery.whereEqualTo("pushToId", Id);
@@ -124,17 +124,17 @@ public class ParseNotificationRepository {
     public static boolean sendBindAcceptedInvitationById(String Id){
 
         ParseInstallation.getCurrentInstallation().saveInBackground();
-
-        // Associate the device with a user
-        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        installation.put("pushToId",Id); // Should not be objectId!
-        // which already have in Installation table
-        try {
-            installation.save();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            Log.d("push", e.toString());
-        }
+//
+//        // Associate the device with a user
+//        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+//        installation.put("pushToId",Id); // Should not be objectId!
+//        // which already have in Installation table
+//        try {
+//            installation.save();
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//            Log.d("push", e.toString());
+//        }
 
         ParseQuery pushQuery = ParseInstallation.getQuery();
         pushQuery.whereEqualTo("pushToId", Id);
@@ -150,7 +150,7 @@ public class ParseNotificationRepository {
               */
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("alert","Binding Invitation Accepted by "+ParseUser.getCurrentUser().getUsername());
-            jsonObject.put("form", "Cancel");
+            jsonObject.put("form", "Accepted");
             jsonObject.put("fromWho", ParseUser.getCurrentUser().getUsername());
             push.setData(jsonObject);
         } catch (JSONException e) {
@@ -180,16 +180,16 @@ public class ParseNotificationRepository {
 
         ParseInstallation.getCurrentInstallation().saveInBackground();
 
-        // Associate the device with a user
-        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        installation.put("pushToId",Id); // Should not be objectId!
-        // which already have in Installation table
-        try {
-            installation.save();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            Log.d("push", e.toString());
-        }
+//        // Associate the device with a user
+//        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+//        installation.put("pushToId",Id); // Should not be objectId!
+//        // which already have in Installation table
+//        try {
+//            installation.save();
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//            Log.d("push", e.toString());
+//        }
 
         ParseQuery pushQuery = ParseInstallation.getQuery();
         pushQuery.whereEqualTo("pushToId", Id);

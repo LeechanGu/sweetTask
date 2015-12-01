@@ -26,14 +26,12 @@ public class UserMng {
     }
 
     public String getPartnerUsername() {
-        return partnerUsername;
+        return getPartnerNameFromParse();
     }
 
     private String getPartnerNameFromParse() {
         // mock method
         // UserMngRepository.get
-
-
         return UserMngRepository.getPartnerUsername();
     }
 }
