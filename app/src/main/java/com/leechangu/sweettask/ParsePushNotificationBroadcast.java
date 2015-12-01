@@ -4,10 +4,16 @@ import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.parse.ParsePushBroadcastReceiver;
 import com.parse.ParseUser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by CharlesGao on 15-11-26.
@@ -17,8 +23,6 @@ import com.parse.ParseUser;
  */
 public class ParsePushNotificationBroadcast extends ParsePushBroadcastReceiver {
 
-    public static int flag_If_Go_To_Invitation_Activity_Automatically = 0;
-    public static int flag_If_Go_To_Cancellation_Activity_Automatically = 0;
 
 
     /**
@@ -35,19 +39,49 @@ public class ParsePushNotificationBroadcast extends ParsePushBroadcastReceiver {
     protected void onPushOpen(Context context, Intent intent) {
         super.onPushOpen(context, intent);
 
+        String form;
+        String fromWho;
+
+        // Bundle from server
+        Bundle extras = intent.getExtras();
+        // when extras != null
+        if(extras!=null){
+            String jsonData = extras.getString("com.parse.Data");
+            try {
+                JSONObject jsonObject = new JSONObject(jsonData);
+                form = jsonObject.getString("form");
+                fromWho = jsonObject.getString("fromWho");
+
+                // Bundle to client
+                Bundle extrasToClient = new Bundle();
+                extrasToClient.putString("fromWho", fromWho);
+                Intent intentToClient;
+                // several forms
+                if(!form.equals("")){
+                    if(form.equals("Invite")){
+                        intentToClient = new Intent(context.getApplicationContext(), InvitationActivity.class);
+                        intentToClient.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intentToClient.putExtras(extrasToClient);
+                        context.startActivity(intentToClient);
+                    }else if(form.equals("Cancel")){
+                        intentToClient = new Intent(context.getApplicationContext(), CancellationActivity.class);
+                        intentToClient.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intentToClient.putExtras(extrasToClient);
+                        context.startActivity(intentToClient);
+                    }else{
+                        // Other form go to MainActivity of the app.
+                        intentToClient = new Intent(context.getApplicationContext(), MainActivity.class);
+                        intentToClient.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intentToClient.putExtras(extrasToClient);
+                        context.startActivity(intentToClient);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
 
-
-
-//        if(ParseUser.getCurrentUser()==null){
-            Intent intent1 = new Intent(context.getApplicationContext(), InvitationActivity.class);
-            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent1);
-//        }else{
-//            //
-//            flag_If_Go_To_Invitation_Activity_Automatically = 1;
-//
-//        }
 
 
     }
@@ -70,4 +104,9 @@ public class ParsePushNotificationBroadcast extends ParsePushBroadcastReceiver {
         super.onPushReceive(context, intent);
     }
 
+    @Override
+    protected Bitmap getLargeIcon(Context context, Intent intent) {
+        Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
+        return largeIcon;
+    }
 }

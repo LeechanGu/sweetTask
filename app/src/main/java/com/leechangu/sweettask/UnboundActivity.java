@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -41,15 +40,13 @@ public class UnboundActivity extends Activity {
                 builder.setPositiveButton(getResources().getString(R.string.confirm), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UserMngRepository.unbindPartner();
+                        UserMngRepository.unbindPartnerWithSendingNotification(partnerUsername);
                         Toast.makeText(UnboundActivity.this,
                                 "Unbind successfully!", Toast.LENGTH_LONG).show();
                         alertDialog.dismiss();
                         ProgressDialog progressDialog = new ProgressDialog(UnboundActivity.this);
                         progressDialog.setMessage("Sending Cancellation...");
                         progressDialog.show();
-                        // TODO : Send notification
-
 
                         finish();
                     }
