@@ -474,17 +474,21 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 
 
     private void partnerScheduleSetting() {
+        // If partner does not accept me, I could not see their tasks, I can only go binding activity
         if (userMng.getPartnerUsername().equals("")) {
             Intent intent = new Intent(MainActivity.this, BoundActivity.class);
             startActivity(intent);
             return;
         }
-        displayedUser = userMng.getPartnerUsername();
-        updateTaskList(displayedUser);
-        myScheduleButton.setPressed(true);
-        partnerScheduleButton.setPressed(false);
-        taskListView.setClickable(false);
-        setMenuOptionNewVisible(true);
+        // Whether partner accept me
+        if (UserMngRepository.isMeAndMyPartnerBindingSuccessfullly(userMng.getPartnerUsername())){
+            displayedUser = userMng.getPartnerUsername();
+            updateTaskList(displayedUser);
+            myScheduleButton.setPressed(true);
+            partnerScheduleButton.setPressed(false);
+            taskListView.setClickable(false);
+            setMenuOptionNewVisible(true);
+        }
     }
 
     @Override

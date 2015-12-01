@@ -29,14 +29,14 @@ public class CancellationActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         if (extras!=null){
             username = extras.get("fromWho").toString();
-            textView_cancellation.setText(getString(R.string.invite_from) + " " + username);
+            textView_cancellation.setText(getString(R.string.cancel_from) + " " + username);
         }
 
         button_got_it.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(CancellationActivity.this,
-                        "You now are not binding with "+username+" any more", Toast.LENGTH_SHORT).show();
+                        "You now are no longer binding with "+username+" any more", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
