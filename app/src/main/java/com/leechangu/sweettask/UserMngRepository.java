@@ -34,6 +34,26 @@ public class UserMngRepository {
         return true;
     }
 
+    public static boolean isThisUserPartnerIsMe(String thisUserUsername){
+
+        String partnerId = UserMngRepository.convertUsernameToId(thisUserUsername);
+        ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
+        parseQuery.whereEqualTo("objectId", partnerId);
+
+        try {
+            List<ParseUser> parseUsers = parseQuery.find();
+            ParseUser thisUser = parseUsers.get(0);
+            if(thisUser.get("partnerId").toString().equals(ParseUser.getCurrentUser().getObjectId())){
+                return true;
+            }else{
+                return false;
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
     public static boolean isThisUserHavePartnerAlready(String partnerUsername){
 
         String partnerId = UserMngRepository.convertUsernameToId(partnerUsername);
@@ -56,10 +76,9 @@ public class UserMngRepository {
         return true;
     }
 
-    public static boolean bindPartner(String partnerUsername){
+    public static boolean bindPartnerWithSendingNotification(String partnerUsername){
 
-        // TODO HARD CODE FOR TESTING, should use partnerUsername
-        String partnerId = UserMngRepository.convertUsernameToId("111");
+        String partnerId = UserMngRepository.convertUsernameToId(partnerUsername);
         ParseUser parseUser = ParseUser.getCurrentUser();
         parseUser.put("partnerId", partnerId);
         try {
@@ -74,8 +93,38 @@ public class UserMngRepository {
         return true;
     }
 
-    public static boolean unbindPartner(){
+    public static boolean acceptBindingInvitation(String partnerUsername){
 
+        String partnerId = UserMngRepository.convertUsernameToId(partnerUsername);
+        ParseUser parseUser = ParseUser.getCurrentUser();
+        parseUser.put("partnerId", partnerId);
+        try {
+            parseUser.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // Send binding accepted notification
+        ParseNotificationRepository.sendBindAcceptedInvitationById(partnerId);
+
+        return true;
+    }
+
+
+
+    public static boolean rejectBindingInvitation(String partnerUsername){
+
+        String partnerId = UserMngRepository.convertUsernameToId(partnerUsername);
+        // Send cancel notification
+        ParseNotificationRepository.sendBindRejectedInvitationById(partnerId);
+
+        return true;
+    }
+
+    public static boolean unbindPartnerWithSendingNotification(String partnerUsername){
+
+
+        String partnerId = UserMngRepository.convertUsernameToId(partnerUsername);
         ParseUser parseUser = ParseUser.getCurrentUser();
         parseUser.put("partnerId", "");
         try {
@@ -83,6 +132,10 @@ public class UserMngRepository {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        // Send binding accepted notification
+        ParseNotificationRepository.sendBindCancellationById(partnerId);
+
         return true;
     }
 

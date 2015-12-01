@@ -18,12 +18,18 @@
     <string name="title_activity_my_location">MyLocationActivity</string>
     <string name="content">Content</string>
     <string name="find_a_partner">Find A Partner!</string>
+    <string name="invite_from">You Received An Binding Invitation from</string>
+    <string name="cancel_from">You Received An Binding Cancellation from</string>
     <string name="enter_partner_name_that_you_want_to_bind">Please enter his/her username!</string>
     <string name="bt_find_partner">FIND</string>
     <string name="confirm">CONFIRM</string>
-    <string name="cancel">CANCEL</string>
+
     <string name="waiting_for_the_server">Waiting for the server...</string>
     <string name="unbind">UNBIND</string>
+    <string name="accept">ACCEPT</string>
+    <string name="gotit">GOT IT</string>
+    <string name="cancel">CANCEL</string>
+    <string name="reject">REJECT</string>
 
     // For AlertDialog
     <string name="find_partner_alertdialog">Are your sure to add this user as your partner?

@@ -5,11 +5,9 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.parse.ParseUser;
@@ -50,7 +48,7 @@ public class BoundActivity extends Activity {
                                         ProgressDialog progressDialog = new ProgressDialog(BoundActivity.this);
                                         progressDialog.setMessage("Sending Invitation...");
 
-                                        UserMngRepository.bindPartner(partnerUsername);
+                                        UserMngRepository.bindPartnerWithSendingNotification(partnerUsername);
                                         Toast.makeText(BoundActivity.this,
                                                 "Partner added", Toast.LENGTH_LONG).show();
 
