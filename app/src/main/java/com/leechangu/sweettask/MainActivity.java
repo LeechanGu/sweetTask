@@ -69,6 +69,16 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     private Button partnerScheduleButton;
     private Button myScheduleButton;
 
+    private void hightlightMyButton()
+    {
+        myScheduleButton.setBackgroundColor(getResources().getColor(R.color.Main_Theme));
+        partnerScheduleButton.setBackgroundColor(getResources().getColor(R.color.Light_Main_Theme));
+    }
+    private void hightlightPartnerButton()
+    {
+        myScheduleButton.setBackgroundColor(getResources().getColor(R.color.Light_Main_Theme));
+        partnerScheduleButton.setBackgroundColor(getResources().getColor(R.color.Main_Theme));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +102,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
             @Override
             public void onClick(View v) {
                 displayedUser = ParseUser.getCurrentUser().getUsername();
-                myScheduleSetting();
+                myScheduleSettingWithUpdate();
             }
         });
 
@@ -218,6 +228,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
         // display tasks in listView
         updateTaskList(displayedUser);
         registerForContextMenu(taskListView);
+        myScheduleSettingWithoutUpdate();
     }
 
     // The following two methods are for upload photo for photoTask---------------------------------
@@ -240,7 +251,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     public boolean onCreateOptionsMenu(Menu menu) {
         optionMenu = menu;
         boolean result = super.onCreateOptionsMenu(menu);
-        menu.findItem(R.id.menu_item_new).setVisible(true);
+        menu.findItem(R.id.menu_item_new).setVisible(false);
         menu.findItem(R.id.menu_item_delete).setVisible(false);
         menu.findItem(R.id.menu_item_save).setVisible(false);
         return result;
@@ -463,13 +474,18 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
     }
 
 
-    private void myScheduleSetting() {
-        displayedUser = ParseUser.getCurrentUser().getUsername();
+    private void myScheduleSettingWithUpdate() {
+        myScheduleSettingWithoutUpdate();
         updateTaskList(displayedUser);
+    }
+
+    private void myScheduleSettingWithoutUpdate() {
+        displayedUser = ParseUser.getCurrentUser().getUsername();
         myScheduleButton.setPressed(false);
         partnerScheduleButton.setPressed(true);
         taskListView.setClickable(true);
         setMenuOptionNewVisible(false);
+        hightlightMyButton();
     }
 
 
@@ -488,7 +504,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
             partnerScheduleButton.setPressed(false);
             taskListView.setClickable(false);
             setMenuOptionNewVisible(true);
-        }
+        hightlightPartnerButton();
     }
 
     @Override

@@ -32,7 +32,8 @@
             android:background="@color/Main_Theme"
             android:layout_alignTop="@+id/SettingButton"
             android:layout_weight="1"
-            android:text="My Schedule" />
+            android:text="My Schedule"
+            android:typeface="normal" />
 
         <Button
             android:id="@+id/partnerScheduleButton"
