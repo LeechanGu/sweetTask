@@ -82,6 +82,8 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
         partnerScheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // If the current user does not have a partner, it will go binding activity
+
                 partnerScheduleSetting();
             }
         });
@@ -460,6 +462,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
         return super.onOptionsItemSelected(item);
     }
 
+
     private void myScheduleSetting() {
         displayedUser = ParseUser.getCurrentUser().getUsername();
         updateTaskList(displayedUser);
@@ -471,6 +474,11 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 
 
     private void partnerScheduleSetting() {
+        if (userMng.getPartnerUsername().equals("")) {
+            Intent intent = new Intent(MainActivity.this, BoundActivity.class);
+            startActivity(intent);
+            return;
+        }
         displayedUser = userMng.getPartnerUsername();
         updateTaskList(displayedUser);
         myScheduleButton.setPressed(true);

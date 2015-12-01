@@ -32,6 +32,8 @@ public class UserMng {
     private String getPartnerNameFromParse() {
         // mock method
         // UserMngRepository.get
+
+
         return UserMngRepository.getPartnerUsername();
     }
 }
