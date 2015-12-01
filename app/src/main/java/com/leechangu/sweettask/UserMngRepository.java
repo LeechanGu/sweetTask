@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by CharlesGao on 15-11-25.
  *
- * Function: This is a class that manage the user from parse cloud
+ * Function: This is a class that manage the user from parse cloud.
  */
 public class UserMngRepository {
 
