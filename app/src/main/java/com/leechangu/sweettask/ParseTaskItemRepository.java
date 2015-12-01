@@ -2,6 +2,7 @@ package com.leechangu.sweettask;
 
 
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -155,5 +156,43 @@ public class ParseTaskItemRepository {
         }
         return true;
     }
+
+
+    public static ParseTaskItem getParseTaskItemById(String taskId) {
+
+        ParseTaskItem parseTaskItem;
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseTaskItem");
+        query.whereEqualTo("objectId", taskId);
+        try {
+            List<ParseObject> parseObjects = query.find();
+            parseTaskItem = new ParseTaskItem();
+            fillTaskItem(parseTaskItem, parseObjects.get(0));
+            return parseTaskItem;
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    // Set Photo to specific task
+    public static boolean setPhotoToTaskById(String taskId, ParseFile file){
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseTaskItem");
+        query.whereEqualTo("objectId", taskId);
+        try {
+            List<ParseObject> parseObjects = query.find();
+            ParseObject parseObject = parseObjects.get(0);
+            parseObject.put("taskPic", file);
+            parseObject.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+
 
 }
