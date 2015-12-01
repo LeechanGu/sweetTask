@@ -96,8 +96,6 @@ public class BoundActivity extends Activity {
             return false;
         }
 
-        // TODO: now current user can add partner more than one times,
-        // TODO: it will send invite notification more then one time, which is not good.
         if(UserMngRepository.isPartnerUsernameValid(partnerUsername)){
             // check if this user have already has a partner
             if (UserMngRepository.isThisUserHavePartnerAlready(partnerUsername)){
