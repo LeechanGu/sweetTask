@@ -34,4 +34,7 @@ public class UserMng {
         // UserMngRepository.get
         return UserMngRepository.getPartnerUsername();
     }
+
+
+
 }

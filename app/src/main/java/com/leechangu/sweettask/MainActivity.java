@@ -497,14 +497,18 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
             return;
         }
         // Whether partner accept me
-        if (UserMngRepository.isMeAndMyPartnerBindingSuccessfullly(userMng.getPartnerUsername())){
+        if (UserMngRepository.isMeAndMyPartnerBindingSuccessfullly(userMng.getPartnerUsername())) {
             displayedUser = userMng.getPartnerUsername();
             updateTaskList(displayedUser);
             myScheduleButton.setPressed(true);
             partnerScheduleButton.setPressed(false);
             taskListView.setClickable(false);
             setMenuOptionNewVisible(true);
-        hightlightPartnerButton();
+            hightlightPartnerButton();
+        } else {
+            Intent intent = new Intent(MainActivity.this, BoundActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override
