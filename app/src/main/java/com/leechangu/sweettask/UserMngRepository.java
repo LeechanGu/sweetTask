@@ -64,7 +64,7 @@ public class UserMngRepository {
         try {
             List<ParseUser> parseUsers = parseQuery.find();
             ParseUser thisUser = parseUsers.get(0);
-            if(thisUser.get("partnerId")==null){
+            if(thisUser.get("partnerId")==null || thisUser.get("partnerId").equals("")){
                 // ==null, which means does not have a partner
                 return false;
             }else{

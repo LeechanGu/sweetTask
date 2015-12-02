@@ -30,7 +30,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.leechangu.sweettask.settask.TaskPreferenceActivity;
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -42,6 +45,10 @@ import java.util.List;
 //import com.leechangu.sweettask.db.TaskDb;
 
 public class MainActivity extends BaseActionBarActivity implements CheckBox.OnClickListener{
+
+    // This is for photo task, the file is photo
+    private ParseFile file;
+    private String taskId;
 
     Context context;
     public final static int REQUESTCODE_LOCATION = 2;
@@ -118,6 +125,9 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                 final ParseTaskItem parseTaskItem = (ParseTaskItem) taskListView.getItemAtPosition(position);
 
+                // Get the Id(objectId in parse) in order to save the pic to specific task
+                taskId = parseTaskItem.getId();
+
                 final AlertDialog.Builder alert;
                 alert = new AlertDialog.Builder(MainActivity.this);
                 alert.setTitle("Task requirement:");
@@ -127,6 +137,15 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 alert.setView(modifyView);
 
                 uploadedPhoto = (ImageView)modifyView.findViewById(R.id.iv_photo_upload);
+
+                // Set photo that fetch from Parse if the task is a photo task and is finished
+                if (parseTaskItem.isPhotoTask() && parseTaskItem.isPhotoTaskFinished()){
+                    if(ParseTaskItemRepository.getParseTaskItemById(taskId)!=null){
+                        Bitmap photoFromParse = ParseTaskItemRepository.fetchPhotoByTaskId(taskId);
+                        if (photoFromParse==null) Log.d("photo", "null");
+                        uploadedPhoto.setImageBitmap(photoFromParse);
+                    }
+                }
 
                 checkBoxeList = new ArrayList<CheckBox>();
                 CheckBox contentCheckBox = (CheckBox)modifyView.findViewById(R.id.contentCheckBox);
@@ -163,6 +182,9 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                     photoCheckBox.setVisibility(View.VISIBLE);
                     checkBoxeList.add(photoCheckBox);
                     photoCheckBox.setText("Photo task (Click to upload a photo)");
+                    // If the photoTask is finished, this should be checked
+                    // at the time the user hit this again;
+                    if (parseTaskItem.isPhotoTaskFinished()) photoCheckBox.setChecked(true);
                     photoCheckBox.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View v) {
@@ -190,6 +212,29 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
 
                 alert.setPositiveButton("Finished", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+
+                        // If the file is not null, save it.
+                        if (file!=null){
+                            // Only saved file can be push to Parse
+                            file.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if(e == null){
+                                        Log.d("TAG", "save to Parse");
+                                    }else {
+                                        Log.d("TAG", e.toString());
+                                    }
+                                }
+                            });
+                            // Attach the file to current user
+                            if (ParseTaskItemRepository.getParseTaskItemById(taskId)!=null){
+                                ParseTaskItemRepository.setPhotoToTaskById(taskId,file);
+                            }
+                            if (ParseTaskItemRepository.setPhotoToTaskById(taskId,file)){
+                                parseTaskItem.setIsPhotoTaskFinished(true);
+                            }
+                        }
+
                         boolean allChecked = true;
                         for (CheckBox checkBox: checkBoxeList)
                         {
@@ -210,6 +255,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                         else
                         {
                             Toast.makeText(getApplicationContext(), "Some tasks are yet to be finished.", Toast.LENGTH_SHORT).show();
+                            ParseTaskItemRepository.updateParseTask(parseTaskItem);
                         }
                     }
                 });
@@ -401,21 +447,23 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                     //---------------------
                     photoCheckBox.setChecked(true);
 
+
                     // Decode this image to ParseFile
-//                file = new ParseFile("propic.jpg", b);
-//
-//                Toast.makeText(this, "You set your pro pic successfully!",
-//                        Toast.LENGTH_SHORT).show();
-//
-//                // Only saved file can be push to Parse
-//                file.saveInBackground(new SaveCallback() {
-//                    @Override
-//                    public void done(ParseException e) {
-//                        if (e == null) {
-//                            Log.d("TAG", "save to Parse");
+                    file = new ParseFile("taskPic", b);
+
+
+                    Toast.makeText(this, "You set your task pic successfully!",
+                            Toast.LENGTH_SHORT).show();
+
+//                    // Only saved file can be push to Parse
+//                    file.saveInBackground(new SaveCallback() {
+//                        @Override
+//                        public void done(ParseException e) {
+//                            if(e == null){
+//                                Log.d("TAG", "save to Parse");
+//                            }
 //                        }
-//                    }
-//                });
+//                    });
                 } else {
                     photoCheckBox.setChecked(false);
                     Toast.makeText(this, "You haven't picked photo",
@@ -433,12 +481,12 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                     photo.compress(Bitmap.CompressFormat.JPEG, 50, stream);
                     byte[] b = stream.toByteArray();
 
-//                // Decode this image to ParseFile
-//                file = new ParseFile("propic.jpg", b);
-//
-//                Toast.makeText(this, "You set your pro pic successfully!",
-//                        Toast.LENGTH_SHORT).show();
-//
+                // Decode this image to ParseFile
+                file = new ParseFile("taskPic", b);
+
+                Toast.makeText(this, "You set your task pic successfully!",
+                        Toast.LENGTH_SHORT).show();
+
 //                // Only saved file can be push to Parse
 //                file.saveInBackground(new SaveCallback() {
 //                    @Override
@@ -497,14 +545,18 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
             return;
         }
         // Whether partner accept me
-        if (UserMngRepository.isMeAndMyPartnerBindingSuccessfullly(userMng.getPartnerUsername())){
+        if (UserMngRepository.isMeAndMyPartnerBindingSuccessfullly(userMng.getPartnerUsername())) {
             displayedUser = userMng.getPartnerUsername();
             updateTaskList(displayedUser);
             myScheduleButton.setPressed(true);
             partnerScheduleButton.setPressed(false);
             taskListView.setClickable(false);
             setMenuOptionNewVisible(true);
-        hightlightPartnerButton();
+            hightlightPartnerButton();
+        } else {
+            Intent intent = new Intent(MainActivity.this, BoundActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -529,4 +581,10 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
         menu.add(0, view.getId(), 0, EDIT_STRING);
         menu.add(0, view.getId(), 0, DELETE_STRING);
     }
+
+
+
+
+
+
 }
