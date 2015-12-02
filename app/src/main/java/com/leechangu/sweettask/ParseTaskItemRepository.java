@@ -1,6 +1,11 @@
 package com.leechangu.sweettask;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.widget.ImageView;
+
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -43,30 +48,7 @@ public class ParseTaskItemRepository {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-//        query.findInBackground(new FindCallback<ParseObject>() {
-//            public void done(List<ParseObject> parseObjectList, ParseException e) {
-//                for (ParseObject parseObject : parseObjectList) {
-//                    // Create a new ParseTaskItem and pass all the fields from ParseObject to
-//                    // ParseTaskItem (because could not cast ParseObject to ParseTaskItem)
-//                    ParseTaskItem parseTaskItem = new ParseTaskItem();
-//                    Log.d("TAG READALL", parseObject.getClassName() + "" + parseObject.getObjectId());
-//                    parseTaskItem.setContent(parseObject.getString("taskContent"));
-//                    parseTaskItem.setVibrate(parseObject.getBoolean("vibrate"));
-//                    parseTaskItem.setActive(parseObject.getBoolean("active"));
-//                    parseTaskItem.setTimeBasis(ParseTaskItem.TimeBasisEnum.valueOf(parseObject.getString("timeBasis")));
-//                    parseTaskItem.setIsPhotoTask(parseObject.getBoolean("isPhotoTask"));
-//                    parseTaskItem.setIsPhotoTaskFinished(parseObject.getBoolean("isPhotoTaskFinished"));
-//                    parseTaskItem.setIsMapTask(parseObject.getBoolean("isMapTask"));
-//                    parseTaskItem.setIsMapTaskFinished(parseObject.getBoolean("isMapTaskFinished"));
-//                    parseTaskItem.setMapInfo(parseObject.getString("mapInfo"));
-//                    parseTaskItem.setAlarmTonePath(parseObject.getString("alarmTonePath"));
-//                    parseTaskItem.setIfAllTasksFinished(parseObject.getBoolean("ifAllTasksFinished"));
-//
-//                    // Add it to parseTaskItems
-//                    parseTaskItems.add(parseTaskItem);
-//                }
-//            }
-//        });
+
 
         return parseTaskItems;
     }
@@ -191,6 +173,35 @@ public class ParseTaskItemRepository {
         }
 
         return true;
+    }
+
+
+    public static Bitmap fetchPhotoByTaskId(String taskId){
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseTaskItem");
+        query.whereEqualTo("objectId", taskId);
+        Bitmap bitmap = null;
+
+        try {
+            List<ParseObject> parseObjects = query.find();
+            ParseObject parseObject = parseObjects.get(0);
+            ParseFile parseFile = parseObject.getParseFile("taskPic");
+
+            bitmap = BitmapFactory.decodeByteArray(parseFile.getData(), 0,
+                                        parseFile.getData().length);
+
+//            parseFile.getDataInBackground(new GetDataCallback() {
+//                @Override
+//                public void done(byte[] data, ParseException e) {
+//                    bitmap = BitmapFactory.decodeByteArray(data, 0,
+//                            data.length);
+//                }
+//            });
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
 
