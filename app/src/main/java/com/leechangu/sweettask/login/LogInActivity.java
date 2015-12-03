@@ -13,10 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.leechangu.sweettask.CancellationActivity;
-import com.leechangu.sweettask.InvitationActivity;
 import com.leechangu.sweettask.MainActivity;
-import com.leechangu.sweettask.ParsePushNotificationBroadcast;
 import com.leechangu.sweettask.R;
 import com.leechangu.sweettask.UserMng;
 import com.leechangu.sweettask.UserMngRepository;
@@ -66,9 +63,9 @@ public class LogInActivity extends Activity {
 
     private void initControls() {
         //Set the activity layout.
-        theUsername = (EditText) findViewById(R.id.Username);
-        thePassword = (EditText) findViewById(R.id.Password);
-        loginButton = (Button) findViewById(R.id.Login);
+        theUsername = (EditText) findViewById(R.id.usernameTextEdit_LoginActivity);
+        thePassword = (EditText) findViewById(R.id.passwordTextEdit_LoginActivity);
+        loginButton = (Button) findViewById(R.id.login_LoginActivity);
         registerTextView = (TextView) findViewById(R.id.Register);
 
         rememberDetails = (CheckBox) findViewById(R.id.RememberMe);

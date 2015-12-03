@@ -10,11 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.leechangu.sweettask.MainActivity;
 import com.leechangu.sweettask.R;
 import com.leechangu.sweettask.UtilRepository;
 import com.leechangu.sweettask.db.AccountDbAdapter;
-import com.leechangu.sweettask.login.LogInActivity;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -52,11 +50,11 @@ public class RegisterActivity extends Activity {
      */
     private void initControls()
     {
-        newUsername = (EditText) findViewById(R.id.nUsername);
-        newEmail = (EditText) findViewById(R.id.id_regiser_email);
-        newPassword = (EditText) findViewById(R.id.nPassword);
-        newConfiPass = (EditText) findViewById(R.id.nConfiPass);
-        registerButton = (Button) findViewById(R.id.nRegister);
+        newUsername = (EditText) findViewById(R.id.usernameTextEdit_RegisterActivity);
+        newEmail = (EditText) findViewById(R.id.emailTextEdit_RegisterActivity);
+        newPassword = (EditText) findViewById(R.id.passwordTextEdit_RegisterActivity);
+        newConfiPass = (EditText) findViewById(R.id.repasswordTextEdit_RegisterActivity);
+        registerButton = (Button) findViewById(R.id.registerButton_RegisterActivity);
         backButton = (Button) findViewById(R.id.nBack);
 
         registerButton.setOnClickListener(new Button.OnClickListener() {

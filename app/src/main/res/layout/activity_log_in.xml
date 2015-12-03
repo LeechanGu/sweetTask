@@ -16,7 +16,7 @@
 
     <EditText
         android:layout_height="wrap_content"
-        android:id="@+id/Username"
+        android:id="@+id/usernameTextEdit_LoginActivity"
         android:selectAllOnFocus="true"
         android:lines="1"
         android:hint="Username"
@@ -29,7 +29,7 @@
 
     <EditText
         android:layout_height="wrap_content"
-        android:id="@+id/Password"
+        android:id="@+id/passwordTextEdit_LoginActivity"
         android:selectAllOnFocus="true"
         android:lines="1"
         android:hint="Password"
@@ -54,7 +54,7 @@
         android:gravity="center_vertical|center_horizontal"
         android:text="Log In"
         android:background="@color/Main_Theme"
-        android:id="@+id/Login"
+        android:id="@+id/login_LoginActivity"
         android:clickable="true"
         android:layout_gravity="center_horizontal"
         android:layout_width="300dp"
