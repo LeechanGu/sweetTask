@@ -151,7 +151,6 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                 CheckBox contentCheckBox = (CheckBox)modifyView.findViewById(R.id.contentCheckBox);
                 contentCheckBox.setText(parseTaskItem.getContent());
                 contentCheckBox.setChecked(true);
-                contentCheckBox.setEnabled(false);
                 checkBoxeList.add(contentCheckBox);
 
                 //Add checkBox for Map
@@ -219,7 +218,7 @@ public class MainActivity extends BaseActionBarActivity implements CheckBox.OnCl
                     return;
                 }else
                 {
-                    contentCheckBox.setEnabled(true);
+                    contentCheckBox.setEnabled(false);
                     mapCheckBox.setEnabled(true);
                     photoCheckBox.setEnabled(true);
                 }
